@@ -186,9 +186,8 @@
                 var factor = delta < 0 ?  0.9 : 1.1;
                 zoom({x: e.pageX, y: e.pageY}, factor)
                 return false;
-            });
-
-            $(document).mousemove(function(e){
+            })
+            .mousemove(function(e){
                     if (!isgrabbing) return true;
 
                     scrollTo(oldX - e.pageX, oldY - e.pageY);
