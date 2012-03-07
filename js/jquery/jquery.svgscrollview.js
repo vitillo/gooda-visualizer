@@ -191,17 +191,29 @@
                 zoom({x: e.pageX, y: e.pageY}, factor)
                 return false;
             })
-            .mousemove(function(e){
-                    if (!isgrabbing) return true;
+            
+            
+            $(document).mousemove(function(e){
+              if (!isgrabbing) return true;
 
-                    scrollTo(oldX - e.pageX, oldY - e.pageY);
-                    oldX = e.pageX;
-                    oldY = e.pageY;
-
-                    return false;
+              scrollTo(oldX - e.pageX, oldY - e.pageY);
+              oldX = e.pageX;
+              oldY = e.pageY;
+              
+              return false;
             })
-            .mouseleave(function(){ stopgrab(); return false; })
-            .mouseup(function(){ stopgrab(); return false; });
+            .mouseleave(function(){ 
+              if(!isgrabbing) return true;
+              
+              stopgrab(); 
+              return false; 
+            })
+            .mouseup(function(){ 
+              if(!isgrabbing) return true;
+              
+              stopgrab(); 
+              return false; 
+            });
             
             $(group).delegate('g.node', {
                 mouseenter: function(){
