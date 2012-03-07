@@ -67,6 +67,24 @@ body.claro{
   font-size: 11px;
 }
 
+.visualizerIcon {
+	width: 18px;
+	height: 18px;
+	text-align: center;
+}
+
+.visualizerIconMagnifyIn{
+  background-image: url('../images/magnifierZoomIn.png');
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+
+.visualizerIconMagnifyOut{
+  background-image: url('../images/magnifierZoomOut.png');
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+
 #viewport{
   height: 100%;
   width: 100%;

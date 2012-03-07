@@ -190,9 +190,9 @@ require(["dojo/_base/declare",
         return;
       }
       
-      this.cfgContainer = new ContentPane({
+      this.cfgContainer = new BorderContainer({
         title: "Control Flow Graph",
-        style: "height: 30%; width: 100%; padding: 0; overflow: hidden",
+        style: "height: 33%; width: 100%; padding: 0; overflow: hidden",
         region: "bottom",
         splitter: true
       });
@@ -204,7 +204,7 @@ require(["dojo/_base/declare",
       this.container.addChild(this.cfgContainer);
 
       this.cfgView = new GOoDA.CFGPane({
-        container: self.cfgContainer.domNode,
+        container: self.cfgContainer,
         svg: self.CFGData,
         clickHandler: function(bb){
           var selection = self.asmView.select(function(row){

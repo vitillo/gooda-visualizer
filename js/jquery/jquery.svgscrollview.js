@@ -125,6 +125,10 @@
                 oldSelection.push(poly[0]);
             }
             
+            this.zoom = function(factor){
+              zoom({x: parent.offset().left + width/2, y: parent.offset().top + height/2}, factor);
+            }
+            
             this.resize = function(){
                 width = parent.width();
                 height = parent.height();
@@ -221,6 +225,7 @@
         return this.each(function(){
             if(args[0] == 'select') this.svgscrollview.select(args[1], args[2]);
             else if(args[0] == 'resize') this.svgscrollview.resize(args[1], args[2]);
+            else if(args[0] == 'zoom') this.svgscrollview.zoom(args[1]);
             else this.svgscrollview = new SVGScrollView(this, args[0]);
         });
     };

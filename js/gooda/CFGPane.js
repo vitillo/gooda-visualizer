@@ -37,14 +37,52 @@
 */
 
 require(["dojo/_base/declare",
-         "dijit/layout/ContentPane"], function(declare, 
-                                               ContentPane){
+         "dijit/layout/ContentPane",
+         "dijit/Toolbar",
+         "dijit/form/Button"], function(declare, 
+                                        ContentPane,
+                                        Toolbar,
+                                        Button){
   declare("GOoDA.CFGPane", null, {
     constructor: function(params){
       declare.safeMixin(this, params);
       
-      $(this.container).append(this.svg);
-
+      var self = this;
+      
+      var toolbar = new Toolbar({
+        region: 'top',
+        style: "padding: 0; height: 25px",
+      });
+      
+      var zoomIn = new Button({
+        label: 'Zoom In',
+        showLabel: false,
+        iconClass: "visualizerIcon visualizerIconMagnifyIn",
+        onClick: function(){
+          self.svg.SVGScrollView('zoom', 1.5);
+        }
+      });
+      
+      var zoomOut = new Button({
+         label: 'Zoom Out',
+         showLabel: false,
+         iconClass: "visualizerIcon visualizerIconMagnifyOut",
+         onClick: function(){
+           self.svg.SVGScrollView('zoom', 0.67);
+         }
+       });
+      
+      var cfgPane = new ContentPane({
+        region: 'center',
+        style: "padding: 0; margin-top: -6px"
+      });
+      
+      toolbar.addChild(zoomIn);
+      toolbar.addChild(zoomOut);
+      this.container.addChild(toolbar);
+      this.container.addChild(cfgPane);
+      
+      $(cfgPane.domNode).append(this.svg);
       this.svg.SVGScrollView({
         clickHandler: this.clickHandler
       });
