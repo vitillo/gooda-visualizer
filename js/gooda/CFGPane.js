@@ -74,7 +74,7 @@ require(["dojo/_base/declare",
       
       var cfgPane = new ContentPane({
         region: 'center',
-        style: "padding: 0; margin-top: -6px"
+        style: "padding: 0; margin-top: -6px; overflow: hidden"
       });
       
       toolbar.addChild(zoomIn);

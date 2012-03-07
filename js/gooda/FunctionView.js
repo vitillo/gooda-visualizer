@@ -192,7 +192,7 @@ require(["dojo/_base/declare",
       
       this.cfgContainer = new BorderContainer({
         title: "Control Flow Graph",
-        style: "height: 33%; width: 100%; padding: 0; overflow: hidden",
+        style: "height: 33%; width: 100%; ",
         region: "bottom",
         splitter: true
       });
