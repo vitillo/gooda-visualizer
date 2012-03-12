@@ -49,7 +49,7 @@ require(["dojo/_base/declare",
     
       declare.safeMixin(this, params);
       
-      this.resourcesToProcess = 3;
+      this.resourcesToLoad = 3;
       this.container.closable = true;
       this.container.name = this.processName + this.functionName;
       this.container.title = (this.functionName.length > 25) 
@@ -123,7 +123,7 @@ require(["dojo/_base/declare",
       this.sourceLines = this.ASMData.sourceLines;
       this.highlightedASMRow = this.ASMData.maxRow;
       delete this.ASMData;
-      self.resourceProcessed();
+      this.resourceProcessed();
     },
     
     buildSRCPane: function(){
@@ -179,7 +179,7 @@ require(["dojo/_base/declare",
       }
       
       delete self.SRCData;
-      self.resourceProcessed();
+      this.resourceProcessed();
     },
     
     buildCFGPane: function(){
@@ -203,7 +203,7 @@ require(["dojo/_base/declare",
     
       this.container.addChild(this.cfgContainer);
 
-      this.cfgView = new GOoDA.CFGPane({
+      this.cfgView = new GOoDA.GraphPane({
         container: self.cfgContainer,
         svg: self.CFGData,
         clickHandler: function(bb){
@@ -222,7 +222,7 @@ require(["dojo/_base/declare",
       });
       
       delete self.CFGData;
-      self.resourceProcessed();
+      this.resourceProcessed();
     },
     
     onLoaded: function(){

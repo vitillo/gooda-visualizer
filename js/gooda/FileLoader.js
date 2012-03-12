@@ -110,6 +110,12 @@ require(["dojo/_base/declare"], function(declare){
         request.success($(data.substring(data.indexOf('<svg'))).last());
       }, request.failure);
     },
+    
+    getCGData: function(request){
+      this.readFile('reports/' + request.report + '/spreadsheets/cg/' + request.processID + '_cg.svg', function(data){
+        request.success($(data.substring(data.indexOf('<svg'))).last());
+      }, request.failure);
+    },
 
     convert: function(firstColumn, firstEventColumn, data, initialize, exec, finalize){
       var lastEventColumn = data[0].length - 1;
@@ -252,8 +258,11 @@ require(["dojo/_base/declare"], function(declare){
 
         switch(column.field){
           case GOoDA.Columns.FUNCTIONNAME:
-          case GOoDA.Columns.PROCESSPATH:
             column.summary = this.getBlankString(column.summary, undefined, '');
+            break;
+            
+          case GOoDA.Columns.PROCESSPATH:
+            column.summary = this.getBlankString(column.summary + 3, undefined, '');
             break;
 
           case GOoDA.Columns.ADDRESS:

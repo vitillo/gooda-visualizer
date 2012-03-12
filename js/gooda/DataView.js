@@ -37,15 +37,17 @@
 */
 
 require(["dojo/_base/declare",
+         "dojo/_base/lang",
          "dojo/aspect",
          "dijit/layout/BorderContainer"], function(declare,
+                                                   lang,
                                                    aspect,
                                                    BorderContainer){
   declare("GOoDA.DataView", null, {
     constructor: function(params){
-      declare.safeMixin(this, params);
-      
       var self = this;
+      
+      declare.safeMixin(this, params);
       
       this.fileLoader = new GOoDA.FileLoader();
       this.visualizer = GOoDA.Visualizer.getInstance();
@@ -56,12 +58,12 @@ require(["dojo/_base/declare",
       });
     },
 
-    loadResource: function(loader, store){
+    loadResource: function(loader, store, params){
       var self = this;
-      
-      loader.call(this.fileLoader, {
+      var args = {
         report: this.report.name,
         functionID: this.functionID,
+        processID: this.processID,
         
         success: function(data){
           self[store] = data;
@@ -72,11 +74,14 @@ require(["dojo/_base/declare",
           self[store] = null;
           self.buildView();
         }
-      })
+      };
+      
+      lang.mixin(args, params);
+      loader.call(this.fileLoader, args);
     },
     
     resourceProcessed: function(){
-      if(!--this.resourcesToLoad){
+      if(--this.resourcesToLoad === 0){
         this.onLoaded && this.onLoaded();
         this.visualizer.hideLoadScreen();
       }

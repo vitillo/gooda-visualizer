@@ -152,15 +152,6 @@ require(["dojo/_base/declare",
         }
       });
       
-      var unselectButton = new Button({
-        label: 'Remove Selection',
-        showLabel: false,
-        iconClass: "dijitEditorIcon dijitEditorIconRemoveFormat",
-        onClick: function(){
-          toggleSelection();
-        }
-      });
-      
       var cyclesButton = new Button({
         title: 'Cycles',
         label: 'Cycles',
@@ -189,8 +180,6 @@ require(["dojo/_base/declare",
       
       if(this.expand)
         toolbar.addChild(expandButton);
-      if(this.unselect)
-        toolbar.addChild(unselectButton);
       toolbar.addChild(cyclesButton);
       toolbar.addChild(samplesButton);
       toolbar.addChild(searchBox);
@@ -255,10 +244,6 @@ require(["dojo/_base/declare",
         grid.invalidate();
         dataView.refresh();
         restoreSelectedRows();
-      }
-
-      function toggleSelection(){
-        self.codeHandler(null, null, null, null, null, self);
       }
 
       function restoreSelectedRows(noscroll){
@@ -336,21 +321,32 @@ require(["dojo/_base/declare",
           var target = $(e.target);
 
           if (target.hasClass('toggle')) {
-                      var item = dataView.rows[row];
+            var item = dataView.rows[row];
 
-                      if (item) {
-                          if (!item._collapsed)
-                              item._collapsed = true;
-                          else
-                              item._collapsed = false;
+            if (item) {
+              if (!item._collapsed)
+              item._collapsed = true;
+              else
+              item._collapsed = false;
 
-                          dataView.updateItem(item.id, item);
-                          restoreSelectedRows(true);
-                      }
+              dataView.updateItem(item.id, item);
+              restoreSelectedRows(true);
+            }
 
-                      return true;
-                  }else if(self.codeHandler){
+            return true;
+          }else if(self.codeHandler){
             self.codeHandler(target, e, row, cell, dataView.getRow(row), self);
+            return true;
+          }
+
+          return false;
+        }
+        
+        grid.onDblClick = function(e, row, cell){
+          var target = $(e.target);
+          
+          if(self.altCodeHandler){
+            self.altCodeHandler(target, e, row, cell, dataView.getRow(row), self);
             return true;
           }
 
@@ -358,19 +354,19 @@ require(["dojo/_base/declare",
         }
 
         grid.onSort = function(sortCol, sortAsc) {
-                  sortcol = sortCol.id;
-                  sortdir = sortAsc;
+          sortcol = sortCol.id;
+          sortdir = sortAsc;
 
-                  if(sortcol == 'code')
+          if(sortcol == 'code')
             sortcol = 'id';
 
           dataView.sort(comparer,sortAsc);
           restoreSelectedRows();
-              };
+        };
 
         dataView.onRowCountChanged.subscribe(function(args) {
           grid.updateRowCount();
-                  grid.render();
+          grid.render();
         });
 
         dataView.onRowsChanged.subscribe(function(rows) {
@@ -463,6 +459,11 @@ require(["dojo/_base/declare",
         dataView.endUpdate();
       }
 
+
+      this.unselect = function(){
+        this.selectRows([]);
+      }
+
       this.refresh = function(){
         grid.restoreViewport();
         grid.render();
@@ -508,6 +509,10 @@ require(["dojo/_base/declare",
       
       this.resize = function(){
         grid && grid.resizeCanvas();
+      }
+      
+      this.getRow = function(id){
+        return dataView.getRowById(id);
       }
 
       buildHTMLTable();

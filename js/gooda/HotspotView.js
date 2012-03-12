@@ -39,30 +39,45 @@
 require(["dojo/_base/declare",
          "dojo/on",
          "dijit/layout/ContentPane",
-         "dijit/layout/BorderContainer"], function(declare, 
+         "dijit/layout/BorderContainer",
+         "dojox/widget/Standby"], function(declare, 
                                            on,
                                            ContentPane, 
-                                           BorderContainer){
+                                           BorderContainer,
+                                           StandBy){
   declare("GOoDA.HotspotView", GOoDA.DataView, {
     constructor: function(params){
       var self = this;
     
       declare.safeMixin(this, params);
       
-      this.resourcesToProcess = 2;
+      this.resourcesToLoad = 3;
+      this.selection = {
+        processID: 0,
+        id: 0
+      }
+      this.bottomContainer = new BorderContainer({
+        region: "center",
+        splitter: true,
+        style: "padding: 0"
+      });
+      
+      this.container.addChild(this.bottomContainer);
       
       this.loadResource(this.fileLoader.getHotProcessData, 'HotProcessData');
       this.loadResource(this.fileLoader.getHotFunctionData, 'HotFunctionData');
+      this.loadResource(this.fileLoader.getCGData, 'CGData', {processID: 0});
     },
     
     buildView: function(){
-      if(this.HotProcessData === undefined || this.HotFunctionData === undefined)
+      if(this.HotProcessData === undefined || this.HotFunctionData === undefined || this.CGData === undefined)
         return;
       else if(this.HotProcessData === null || this.HotFunctionData === null)
         this.failure('Missing report data!');
       else{
         this.buildHotProcessView();
         this.buildHotFunctionView();
+        this.buildCGView();
       }
     },
     
@@ -87,7 +102,6 @@ require(["dojo/_base/declare",
         container: self.processContainer,
         source: GOoDA.Columns.PROCESSPATH,
         data: self.HotProcessData,
-        unselect: true,
         expand: true,
         
         rowCssClasses: function(d){
@@ -99,10 +113,12 @@ require(["dojo/_base/declare",
           var process;
           var paths;
           var module;
-          
+          var processID;
+
           if(!data)
             table.selectRows([]);
           else{
+            processID = data.parent ? data.parent.id : data.id;
             process = data[GOoDA.Columns.PROCESSPATH] || data.parent[GOoDA.Columns.PROCESSPATH];
             
             table.selectRows([data]);
@@ -114,11 +130,32 @@ require(["dojo/_base/declare",
 
             criterias[GOoDA.Columns.PROCESS] = process;
             criterias[GOoDA.Columns.MODULE] = module;
+            
+            if(self.selection.processID != processID){
+              self.cgLoadScreen && self.cgLoadScreen.show();
+                       
+              self.loadResource(self.fileLoader.getCGData, 'CGData', {
+                processID: data.id,
+                success: function(data){
+                  self._buildCGView(data);
+                  self.cgLoadScreen.hide();
+                },
+                failure: function(){
+                  self.cgLoadScreen.hide();
+                  self.cgView.empty();
+                }
+              });
+              
+              self.selection.processID = processID;
+            }
+            
+            if(self.selection.id != data.id && !self.hotFunctionView.getRow(self.selection.id)){
+              self.unselect();
+              self.selection.id = data.id;
+            }
           }
           
-          if(self.hotFunctionView){
-            self.hotFunctionView.filter(criterias);
-          }
+          self.hotFunctionView && self.hotFunctionView.filter(criterias);
         }
         
       });     
@@ -142,33 +179,117 @@ require(["dojo/_base/declare",
         self.hotFunctionView && self.hotFunctionView.resize();
       })
       
-      this.container.addChild(this.functionContainer);
+      this.bottomContainer.addChild(this.functionContainer);
       
       this.hotFunctionView = new GOoDA.EventTable({
         container: self.functionContainer,
         source: GOoDA.Columns.FUNCTIONNAME,
         data: self.HotFunctionData,
         
-        codeHandler: function(target, e, row, cell, data){
-          var processName = data[GOoDA.Columns.PROCESS];
-          var functionName = data[GOoDA.Columns.FUNCTIONNAME];
-          var functionView = null;
-          
-          if((functionView = self.report.getView(processName + functionName)))
-            self.report.highlightView(functionView);
-          else{
-            new GOoDA.FunctionView({
-              report: self.report,
-              processName: processName,
-              functionName: functionName,
-              functionID: data.id
-            });
-          }
+        codeHandler: function(target, e, row, cell, data, table){
+          table.selectRows([data]);
+          self.cgView && self.cgView.select(data.id);
+        },
+
+        altCodeHandler: function(target, e, row, cell, data){
+          self._openFunctionView(data);
         }
       });
 
       delete this.HotFunctionData;
       this.resourceProcessed();
+    },
+    
+    _openFunctionView: function(data){
+      var processName = data[GOoDA.Columns.PROCESS];
+      var functionName = data[GOoDA.Columns.FUNCTIONNAME];
+      var functionView = null;
+      
+      if((functionView = this.report.getView(processName + functionName)))
+        this.report.highlightView(functionView);
+      else{
+        new GOoDA.FunctionView({
+          report: this.report,
+          processName: processName,
+          functionName: functionName,
+          functionID: data.id
+        });
+      }
+    },
+    
+    buildCGView: function(){
+      var self = this;
+
+      if(!this.CGData){
+        this.resourceProcessed();
+        return;
+      }
+
+      this.cgContainer = new BorderContainer({
+        title: "Call Graph",
+        style: "padding: 0; width: " + ($(this.bottomContainer.domNode).width()/2 - 2) + "px;",
+        region: "right",
+        splitter: true
+      });
+
+      this.onResize(this.cgContainer, function(){
+        self.cgView && self.cgView.resize();
+      });
+
+      this.bottomContainer.addChild(this.cgContainer);
+      
+      this.cgLoadScreen = new dojox.widget.Standby({
+        target: this.cgContainer.domNode,
+        duration: 1,
+        color: '#D3E1EB'
+      });
+      
+      document.body.appendChild(this.cgLoadScreen.domNode);
+      this.cgLoadScreen.startup();
+      
+      this._buildCGView(this.CGData);
+      this.resourceProcessed();
+      delete this.CGData;
+    },
+    
+    _buildCGView: function(data){
+      var self = this;
+      
+      if(this.cgView)
+        this.cgView.reload(data);
+      else{
+        this.cgView = new GOoDA.GraphPane({
+          container: self.cgContainer,
+          svg: data,
+          clickHandler: function(funID){
+            var found = false;
+            
+            self.hotFunctionView.select(function(row){
+              if(row.id == funID){
+                found = true;
+                return true;
+              }else
+                return false;
+            });
+
+            return found;
+          },
+          altClickHandler: function(id){
+            self._openFunctionView(self.hotFunctionView.data.grid[id]);
+          }
+        });
+      }
+    },
+    
+    onLoaded: function(){
+      this.hotProcessView && this.hotProcessView.select(function (row){
+        return row.id === 0;        
+      })
+    },
+    
+    unselect: function(){
+      this.hotFunctionView.unselect();
+      this.cgView && this.cgView.unselect();
     },
     
     refresh: function(){

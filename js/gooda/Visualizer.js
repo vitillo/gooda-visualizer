@@ -85,7 +85,7 @@ require(["dijit/layout/BorderContainer",
       });
       
       this.loadScreen = new dojox.widget.Standby({
-          target: "workspace",
+          target: this.container.domNode,
           duration: 1,
           color: '#D3E1EB'
       });
