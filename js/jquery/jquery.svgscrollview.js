@@ -120,6 +120,10 @@
         curTransX += dx;
         curTransY += dy;
         setCTM(group, trans.multiply(group.getCTM()));
+
+        // Force repaint on Chrome 18+
+        svgDocument.style.display = 'none';
+        svgDocument.style.display = 'block';
       }
 
       function selectNode(node, multiple){                    
