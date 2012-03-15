@@ -61,7 +61,6 @@ require(["dojo/_base/declare",
         splitter: true,
         style: "padding: 0"
       });
-      
       this.container.addChild(this.bottomContainer);
       
       this.loadResource(this.fileLoader.getHotProcessData, 'HotProcessData');
@@ -161,8 +160,8 @@ require(["dojo/_base/declare",
       });     
       
       this.hotProcessView.toggleExpansion();
-      delete this.HotProcessData;
       this.resourceProcessed();
+      delete this.HotProcessData;
     },
     
     buildHotFunctionView: function(){
@@ -196,8 +195,8 @@ require(["dojo/_base/declare",
         }
       });
 
-      delete this.HotFunctionData;
       this.resourceProcessed();
+      delete this.HotFunctionData;
     },
     
     _openFunctionView: function(data){

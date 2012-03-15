@@ -72,6 +72,7 @@ require(["dojo/_base/declare",
   GOoDA.Report.reports = {};
   GOoDA.Report.create = function(name){
     var report = GOoDA.Report.reports[name];
+    
     if(!report)
       report = new GOoDA.Report({name: name, parentContainer: GOoDA.Visualizer.getInstance()});
     else

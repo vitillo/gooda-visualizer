@@ -66,7 +66,7 @@ require(["dojo/_base/declare",
       var referencePeriod = this.data.referencePeriod;
       var inverseReferencePeriod = this.data.inverseReferencePeriod;
 
-      var numberFormatter = function(row, cell, value, column, dataContext){
+      function numberFormatter(row, cell, value, column, dataContext){
         if(!value) return '';
 
         if(column.isCycle){
@@ -109,22 +109,19 @@ require(["dojo/_base/declare",
         }else
           return sampleMode ? value : (value*column.period).toExponential(3);
       };
-
-      function buildField(column, cycles, percentage){
-        percentage = percentage !== undefined ? " (" + percentage + "%)" : "";
-        return cycles.toString() + new Array(column.maxPercentageLength + 5 - percentage.length).join(' ') + percentage;
-      }
-
-      var hexFormatter = function(row, cell, value, column, dataContext){
+      
+      function hexFormatter(row, cell, value, column, dataContext){
         if(row == -1) return value; // summary row
         if(value === undefined) return '';
 
         return '0x' + value.toString(16);
       }
-      var sourceFormatter = function(row, cell, value, column, dataContext){
+      
+      function sourceFormatter(row, cell, value, column, dataContext){
         return $('<div/>').text(value).html();
       };
-      var treeFormatter = function(row, cell, value, column, dataContext) {     
+      
+      function treeFormatter(row, cell, value, column, dataContext) {     
         if(row == -1) return value;
         if(value === undefined) return '';
 
@@ -137,71 +134,74 @@ require(["dojo/_base/declare",
         else
           return "<span class='toggle'></span>" + value;
       };
+      
+      function buildView(){
+        var toolbar = new Toolbar({
+          region: 'top',
+          style: "padding: 0"
+        });
 
-      var toolbar = new Toolbar({
-        region: 'top',
-        style: "padding: 0"
-      });
-      
-      var expandButton = new Button({
-        label: 'Toggle Expansion',
-        showLabel: false,
-        iconClass: "dijitEditorIcon dijitEditorIconListBulletOutdent",
-        onClick: function(){
-          self.toggleExpansion();
-        }
-      });
-      
-      var cyclesButton = new Button({
-        title: 'Cycles',
-        label: 'Cycles',
-        onClick: function(){
-          toggleCycleMode(this);
-        }
-      });
-      
-      var samplesButton = new Button({
-        title: 'Samples',
-        label: 'Samples',
-        onClick: function(){
-          toggleSampleMode(this);
-        }
-      });
-      
-      var searchBox = new TextBox({
-        placeHolder: 'Enter search term',
-        style: 'float: right; margin: 2px',
-        onKeyUp: function(){
-          searchString = this.get('value');
-          dataView.refresh();
-          restoreSelectedRows();
-        }
-      });
-      
-      if(this.expand)
-        toolbar.addChild(expandButton);
-      toolbar.addChild(cyclesButton);
-      toolbar.addChild(samplesButton);
-      toolbar.addChild(searchBox);
-      
-      var pane = new ContentPane({
-        region: 'center',
-        style: "padding: 0; margin-top: -6px"
-      });
-      
-      this.container.addChild(toolbar);
-      this.container.addChild(pane);
-      this.container = pane.domNode;
-      this.columns = [];
-      this.options = {
-        rowCssClasses: this.rowCssClasses,
-        syncColumnCellResize: true,
-        enableCellNavigation: false,
-        enableColumnReorder: false,
-      };
+        var expandButton = new Button({
+          label: 'Toggle Expansion',
+          showLabel: false,
+          iconClass: "dijitEditorIcon dijitEditorIconListBulletOutdent",
+          onClick: function(){
+            self.toggleExpansion();
+          }
+        });
 
-      function buildHTMLTable(){
-        $('<div class="grid" style="width:100%;height:100%;"></div>').appendTo(self.container);
+        var cyclesButton = new Button({
+          title: 'Cycles',
+          label: 'Cycles',
+          onClick: function(){
+            toggleCycleMode(this);
+          }
+        });
+
+        var samplesButton = new Button({
+          title: 'Samples',
+          label: 'Samples',
+          onClick: function(){
+            toggleSampleMode(this);
+          }
+        });
+
+        var searchBox = new TextBox({
+          placeHolder: 'Enter search term',
+          style: 'float: right; margin: 2px',
+          onKeyUp: function(){
+            searchString = this.get('value');
+            dataView.refresh();
+            restoreSelectedRows();
+          }
+        });
+
+        if(self.expand)
+          toolbar.addChild(expandButton);
+        toolbar.addChild(cyclesButton);
+        toolbar.addChild(samplesButton);
+        toolbar.addChild(searchBox);
+
+        var pane = new ContentPane({
+          region: 'center',
+          style: "padding: 0; margin-top: -6px"
+        });
+
+        self.container.addChild(toolbar);
+        self.container.addChild(pane);
+        self.container = pane.domNode;
+        self.columns = [];
+        self.options = {
+          rowCssClasses: self.rowCssClasses,
+          syncColumnCellResize: true,
+          enableCellNavigation: false,
+          enableColumnReorder: false,
+        }; 
+      }
+      
+      function buildField(column, cycles, percentage){
+        percentage = percentage !== undefined ? " (" + percentage + "%)" : "";
+        return cycles.toString() + new Array(column.maxPercentageLength + 5 - percentage.length).join(' ') + percentage;
       }
 
       function comparer(a,b){
@@ -229,21 +229,6 @@ require(["dojo/_base/declare",
             return false;
 
         return true;
-      }
-
-      this.toggleExpansion = function(){
-        collapsed = !collapsed;
-
-        for(var i = 0; i < dataView.rows.length; i++){
-          var item = dataView.rows[i];
-
-          if(item.parent === undefined) item._collapsed = collapsed;
-        }
-
-        grid.scrollToRow(0);
-        grid.invalidate();
-        dataView.refresh();
-        restoreSelectedRows();
       }
 
       function restoreSelectedRows(noscroll){
@@ -445,10 +430,10 @@ require(["dojo/_base/declare",
         self.columns.push(column);
       }
 
-      function buildTable(){        
+      function buildTable(){
+        $('<div class="grid" style="width:100%;height:100%;"></div>').appendTo(self.container);
         dataView = new Slick.Data.DataView();
-        grid = new Slick.Grid($('#' + self.container.getAttribute('widgetid') + ' .grid'), 
-                       dataView.rows, self.columns, self.options);
+        grid = new Slick.Grid($('#' + self.container.getAttribute('widgetid') + ' .grid'), dataView.rows, self.columns, self.options);
         wireEvents();
       }
 
@@ -459,6 +444,20 @@ require(["dojo/_base/declare",
         dataView.endUpdate();
       }
 
+      this.toggleExpansion = function(){
+        collapsed = !collapsed;
+
+        for(var i = 0; i < dataView.rows.length; i++){
+          var item = dataView.rows[i];
+          if(item.parent === undefined) 
+            item._collapsed = collapsed;
+        }
+
+        grid.scrollToRow(0);
+        grid.invalidate();
+        dataView.refresh();
+        restoreSelectedRows();
+      }
 
       this.unselect = function(){
         this.selectRows([]);
@@ -515,7 +514,7 @@ require(["dojo/_base/declare",
         return dataView.getRowById(id);
       }
 
-      buildHTMLTable();
+      buildView();
       addColumns();
       buildTable();
       fillTable();

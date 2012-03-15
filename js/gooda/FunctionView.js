@@ -105,25 +105,21 @@ require(["dojo/_base/declare",
         },
         
         codeHandler: function(target, e, row, cell, item, table){           
-          if(item['parent']) return;
+          if(item['parent']) 
+            return;
+
           table.selectRows([item]);
-          
-          if(self.cfgView){
-            self.cfgView.select('node' + item[GOoDA.Columns.DISASSEMBLY].split(' ')[3]);
-          }
-          
-          if(self.srcView){
-            self.srcView.select(function(row){
-              return (row[GOoDA.Columns.LINENUMBER] === item[GOoDA.Columns.PRINCIPALLINENUMBER]);
-            })
-          }
+          self.cfgView && self.cfgView.select('node' + item[GOoDA.Columns.DISASSEMBLY].split(' ')[3]);
+          self.srcView && self.srcView.select(function(row){
+            return (row[GOoDA.Columns.LINENUMBER] === item[GOoDA.Columns.PRINCIPALLINENUMBER]);
+          });
         },
       });
 
       this.sourceLines = this.ASMData.sourceLines;
       this.highlightedASMRow = this.ASMData.maxRow;
-      delete this.ASMData;
       this.resourceProcessed();
+      delete this.ASMData;
     },
     
     buildSRCPane: function(){
@@ -147,7 +143,7 @@ require(["dojo/_base/declare",
       
       this.container.addChild(this.srcContainer);
     
-      self.srcView = new GOoDA.EventTable({
+      this.srcView = new GOoDA.EventTable({
         container: self.srcContainer,
         source: 'Source',
         data: self.SRCData,
@@ -162,7 +158,9 @@ require(["dojo/_base/declare",
           
           if(selection){
             table.selectRows([item]);
-            if(!self.cfgView) return;
+            
+            if(!self.cfgView) 
+              return;
             
             for(var i = 0; i < selection.length; i++)
               self.cfgView.select('node' + selection[i][GOoDA.Columns.DISASSEMBLY].split(' ')[3], i !== 0);
@@ -170,16 +168,14 @@ require(["dojo/_base/declare",
         }
       });
       
-      if(self.sourceLines){
-        self.srcView.eachRow(function(row){
-          if(row[GOoDA.Columns.LINENUMBER] in self.sourceLines){
-            row.highlight = true;
-          }
-        });
-      }
+      this.sourceLines && this.srcView.eachRow(function(row){
+        if(row[GOoDA.Columns.LINENUMBER] in self.sourceLines){
+          row.highlight = true;
+        }
+      });
       
-      delete self.SRCData;
       this.resourceProcessed();
+      delete this.SRCData;
     },
     
     buildCFGPane: function(){
@@ -206,23 +202,22 @@ require(["dojo/_base/declare",
       this.cfgView = new GOoDA.GraphPane({
         container: self.cfgContainer,
         svg: self.CFGData,
+        
         clickHandler: function(bb){
           var selection = self.asmView.select(function(row){
             return !row.parent && row[GOoDA.Columns.DISASSEMBLY].indexOf('Basic Block ' + bb.substr(4)) != -1;
           });
           
-          if(selection && self.srcView){
-            self.srcView.select(function(row){
-              return (row[GOoDA.Columns.LINENUMBER] === selection[GOoDA.Columns.PRINCIPALLINENUMBER])
-            })
-          }
+          selection && self.srcView && self.srcView.select(function(row){
+            return (row[GOoDA.Columns.LINENUMBER] === selection[GOoDA.Columns.PRINCIPALLINENUMBER])
+          });
 
           return selection;
         }
       });
       
-      delete self.CFGData;
       this.resourceProcessed();
+      delete self.CFGData;
     },
     
     onLoaded: function(){
