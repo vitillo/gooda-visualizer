@@ -65,11 +65,13 @@
       viewbox.height = height;
       svgDocument.setAttribute('width', width + 'px');
       svgDocument.setAttribute('height', height + 'px');
-      $('text', container).css('font-size', '12px')
+      
+      $('text', container).each(function(){
+        this.setAttribute('font-size', '12px');
+      });
 
       setGrab();
       scrollTo(minX, minY);
-      zoom({x: parent.offset().left + width/2, y: parent.offset().top + height/2}, 0.8);
 
       $('a', container).each(function(){
         var group = $(this).parent();
