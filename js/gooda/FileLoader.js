@@ -84,6 +84,7 @@ require(["dojo/_base/declare"], function(declare){
       this.readGrid('reports/' + request.report + '/spreadsheets/asm/' + request.functionID + '_asm.csv', function(data){
         request.success(self.convert(2, 8, data, function(convertedData){
           convertedData.sourceLines = {};
+          convertedData.functionName = convertedData.columns[5].summary;
         }, function(iRow, oRow, convertedData){
           var bb = iRow[1];
 
@@ -119,9 +120,8 @@ require(["dojo/_base/declare"], function(declare){
 
     convert: function(firstColumn, firstEventColumn, data, initialize, exec, finalize){
       var lastEventColumn = data[0].length - 1;
-      var convertedData = this.createConversionData(firstColumn, firstEventColumn, lastEventColumn, data);
+      var convertedData = this.createConversionData(firstColumn, firstEventColumn, lastEventColumn, data, initialize);
 
-      if(initialize) initialize(convertedData);
       this.convertGrid(firstColumn, firstEventColumn, lastEventColumn, data, convertedData, exec);
       this.updateSummary(firstEventColumn - firstColumn, convertedData);
       if(finalize) finalize(convertedData);
@@ -129,7 +129,7 @@ require(["dojo/_base/declare"], function(declare){
       return convertedData;
     },
 
-    createConversionData: function(firstColumn, firstEventColumn, lastEventColumn, data){
+    createConversionData: function(firstColumn, firstEventColumn, lastEventColumn, data, initialize){
       var convertedData = {
         grid: [],
         columns: [],
@@ -157,9 +157,9 @@ require(["dojo/_base/declare"], function(declare){
         };
       }
 
+      if(initialize) initialize(convertedData);
       this.createTree(convertedData.columns);
       this.createSummary(convertedData.columns);
-
       return convertedData;
     },
 

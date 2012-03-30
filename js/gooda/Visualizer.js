@@ -67,6 +67,10 @@ require(["dijit/layout/BorderContainer",
       var reportModel = new ForestStoreModel({
         store: reportStore
       });
+            
+      this.state = new GOoDA.State({
+        visualizer: this
+      });
       
       this.viewport = new BorderContainer({
       }, "viewport");
@@ -105,7 +109,7 @@ require(["dijit/layout/BorderContainer",
         persist: false,
         
         onClick: function(e){
-          GOoDA.Report.create(e._csvId);
+          self.loadReport(e._csvId);
         }
       });
       
@@ -133,6 +137,24 @@ require(["dijit/layout/BorderContainer",
         });
     },
     
+    loadReport: function(name){
+      var report = GOoDA.Report.create(name);
+    },
+    
+    loadFunction: function(reportName, functionID){
+      var functionView;
+      GOoDA.Report.create(reportName, function(report){
+        if((functionView = report.getView(report.name + functionID)))
+          report.highlightView(functionView);
+        else{
+          new GOoDA.FunctionView({
+            report: report,
+            functionID: functionID
+          });
+        }
+      });
+    },
+    
     showLoadScreen: function(){
       this.loadScreen.show();
     },
@@ -147,6 +169,18 @@ require(["dijit/layout/BorderContainer",
       if(Modernizr.touch) return false;
       return true;
     },
+    
+    restoreState: function(){
+      this.state.restoreState();
+    },
+    
+    gotoState: function(state, fresh){
+      this.state.gotoState(state, fresh);
+    },
+    
+    getState: function(){
+      return this.state.getState();
+    }
   });
 
   GOoDA.Visualizer.instance = null;

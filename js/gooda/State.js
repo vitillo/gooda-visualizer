@@ -37,53 +37,61 @@
 */
 
 require(["dojo/_base/declare",
-         "dijit/layout/TabContainer"], function(declare,
-                                                TabContainer){
-  declare("GOoDA.Report", GOoDA.ContainerView, {
+         "dojo/_base/connect",
+         "dojo/_base/lang",
+         "dojo/io-query",
+         "dojo/hash"], function(declare,
+                                connect,
+                                lang,
+                                ioQuery,
+                                hash){
+  declare("GOoDA.State", null, {
     constructor: function(params){
       declare.safeMixin(this, params);
       
-      this.visualizer = GOoDA.Visualizer.getInstance();
-      this.hotspotView = new GOoDA.HotspotView({
-        title: this.name + ' Hotspots',
-        report: this
-      });
-    },
-        
-    addView: function(view){
       var self = this;
-      var firstLoad = false;
+      this.state = {};
       
-      if(!this.container){
-        firstLoad = true;
-        GOoDA.Report.reports[this.name] = this;
-        this.container = new TabContainer({
-          onShow: function(){
-            self.container.selectedChildWidget && self.container.selectedChildWidget.onShow();
-          }
-        });
-        this.visualizer.addView(this.container);
-        this.visualizer.highlightView(this.container);
+      function callback(){
+        self.restoreState(self._createState(hash()));
       }
       
-      this.container.addChild(view);
-      this.container.selectChild(view);
-      firstLoad && this.onLoadHandler && this.onLoadHandler(this);
+      this.state = this._createState(hash());
+      this.gotoState({});
+      
+      connect.subscribe("/dojo/hashchange", null, callback);
+    },
+    
+    gotoState: function(newState, fresh){
+      newState = lang.clone(newState);
+      
+      if(fresh)
+        this.state = newState;
+      else
+        lang.mixin(this.state, newState); 
+      
+      hash(this._createPath(this.state));
+    },
+    
+    restoreState: function(state){
+      var rState = state || this.state;
+
+      if(rState['function'])
+        this.visualizer.loadFunction(rState['report'], rState['function']);
+      else if(rState['report'])
+       this.visualizer.loadReport(rState['report']);
+    },
+    
+    getState: function(){
+      return lang.clone(this.state);
+    },
+    
+    _createPath: function(state){
+      return ioQuery.objectToQuery(state);
+    },
+    
+    _createState: function(path){
+      return ioQuery.queryToObject(hash());
     }
   });
-  
-  GOoDA.Report.reports = {};
-  GOoDA.Report.create = function(name, onLoadHandler){
-    var report = GOoDA.Report.reports[name];
-    var visualizer = GOoDA.Visualizer.getInstance();
-    
-    if(!report)
-      report = new GOoDA.Report({name: name, parentContainer: visualizer, onLoadHandler: onLoadHandler});
-    else{
-      report.highlight();
-      onLoadHandler && onLoadHandler(report);
-    }
-
-    return report;
-  }
 });

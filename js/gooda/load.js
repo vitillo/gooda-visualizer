@@ -38,6 +38,7 @@
 
 require(["dojo/ready"], function(ready){
   ready(function(){
-    GOoDA.Visualizer.getInstance();
+    var visualizer = GOoDA.Visualizer.getInstance();
+    visualizer.restoreState();
   });
 });

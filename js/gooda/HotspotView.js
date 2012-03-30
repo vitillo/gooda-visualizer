@@ -202,16 +202,15 @@ require(["dojo/_base/declare",
     _openFunctionView: function(data){
       var processName = data[GOoDA.Columns.PROCESS];
       var functionName = data[GOoDA.Columns.FUNCTIONNAME];
+      var functionID = data.id;
       var functionView = null;
       
-      if((functionView = this.report.getView(processName + functionName)))
+      if((functionView = this.report.getView(this.report.name + functionID)))
         this.report.highlightView(functionView);
       else{
         new GOoDA.FunctionView({
           report: this.report,
-          processName: processName,
-          functionName: functionName,
-          functionID: data.id
+          functionID: functionID
         });
       }
     },
@@ -284,6 +283,9 @@ require(["dojo/_base/declare",
       this.hotProcessView && this.hotProcessView.select(function (row){
         return row.id === 0;        
       })
+      
+      this.visualizer.gotoState({report: this.report.name}, true);
+      this.state = this.visualizer.getState();
     },
     
     unselect: function(){
@@ -294,6 +296,7 @@ require(["dojo/_base/declare",
     refresh: function(){
       this.hotFunctionView && this.hotFunctionView.refresh();
       this.hotProcessView && this.hotProcessView.refresh();
+      this.state && this.visualizer.gotoState(this.state, true);
     },
   })
 });

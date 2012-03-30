@@ -50,11 +50,6 @@ require(["dojo/_base/declare",
       declare.safeMixin(this, params);
       
       this.resourcesToLoad = 3;
-      this.container.closable = true;
-      this.container.name = this.processName + this.functionName;
-      this.container.title = (this.functionName.length > 25) 
-                             ? this.container.title = '<div title="' + entities.encode(this.functionName) + '">' + entities.encode(this.functionName.substr(0, 22)) + '...</div>' 
-                             : this.functionName;
       
       this.loadResource(this.fileLoader.getASMData, 'ASMData');
       this.loadResource(this.fileLoader.getSRCData, 'SRCData');
@@ -73,11 +68,19 @@ require(["dojo/_base/declare",
     buildASMPane: function(){
       var self = this;
       var title;
+      var functionName;
       
       if(!this.ASMData){
         this.failure('Report data for selected function not available.');
         return;
       }
+      
+      functionName = this.ASMData.functionName;
+      this.container.closable = true;
+      this.container.name = this.report.name + this.functionID;
+      this.container.title = (functionName.length > 25) 
+                             ? this.container.title = '<div title="' + entities.encode(functionName) + '">' + entities.encode(functionName.substr(0, 22)) + '...</div>' 
+                             : functionName;
       
       this.asmContainer = new BorderContainer({
         title: "Assembly Inspector",
@@ -228,11 +231,15 @@ require(["dojo/_base/declare",
       this.srcView && this.srcView.select(function(row){
           return (row[GOoDA.Columns.LINENUMBER] === item[GOoDA.Columns.PRINCIPALLINENUMBER]);
       });
+      
+      this.visualizer.gotoState({process: this.processID, function: this.functionID});
+      this.state = this.visualizer.getState();
     },
     
     refresh: function(){
       this.asmView && this.asmView.refresh();
       this.srcView && this.srcView.refresh();
+      this.state && this.visualizer.gotoState(this.state, true);
     }
   })
 });
