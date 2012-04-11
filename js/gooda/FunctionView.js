@@ -232,7 +232,7 @@ require(["dojo/_base/declare",
           return (row[GOoDA.Columns.LINENUMBER] === item[GOoDA.Columns.PRINCIPALLINENUMBER]);
       });
       
-      this.visualizer.gotoState({process: this.processID, function: this.functionID});
+      this.visualizer.gotoState({process: this.processID, 'function': this.functionID});
       this.state = this.visualizer.getState();
     },
     
