@@ -9,7 +9,7 @@ mkdir -p $SRCDIR/builds
 
 cat $SRCDIR/js/modernizr.js $SRCDIR/js/jquery/{jquery,jquery.event.drag,jquery.mousewheel,jquery.svgscrollview,slick.grid,slick.model}.js \
     | $COMPRESS --type js -o $RELDIR/js/libraries.js
-cat $SRCDIR/js/gooda/{Notification,Columns,FileLoader,EventTable,GraphPane,DataView,FunctionView,HotspotView,ContainerView,HelpPane,Report,Visualizer,load}.js \
+cat $SRCDIR/js/gooda/{State,Notification,Columns,FileLoader,EventTable,GraphPane,DataView,FunctionView,HotspotView,ContainerView,HelpPane,Report,Visualizer,load}.js \
     | $COMPRESS --type js -o $RELDIR/js/visualizer.js
 
 cat $SRCDIR/css/{slick.grid,grid.theme,visualizer}.css \
