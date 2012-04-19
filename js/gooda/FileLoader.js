@@ -70,9 +70,21 @@ require(["dojo/_base/declare"], function(declare){
     
     getHotFunctionData: function(request){
       var self = this;
+      var curFunID = -1;
 
       this.readGrid('reports/' + request.report + '/spreadsheets/function_hotspots.csv', function(data){
-        request.success(self.convert(1, 6, data));
+        request.success(self.convert(3, 8, data, undefined, function(iRow, oRow, convertedData){
+          var funID = iRow[1];
+          
+          if(funID != curFunID){
+            parent = oRow;
+            curFunID = funID;
+            oRow['FunctionID'] = funID;
+          }else{
+            oRow['parent'] = parent;
+            oRow['FunctionID'] = iRow[2];
+          }
+        }));
       }, request.failure);
     },
 
@@ -252,7 +264,7 @@ require(["dojo/_base/declare"], function(declare){
       return Math.max(summaryLength, value.length ? value.length : value);
     },
 
-    updateSummary: function(firstEventColumn, convertedData){     
+    updateSummary: function(firstEventColumn, convertedData){  
       for(var i = 0; i < firstEventColumn; i++){
         column = convertedData.columns[i];
 

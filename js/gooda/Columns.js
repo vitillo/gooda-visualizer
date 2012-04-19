@@ -55,6 +55,7 @@ require(["dojo/_base/declare"], function(declare){
   GOoDA.Columns.INITIALFILE = 'Initial File';
   GOoDA.Columns.PROCESSPATH = 'Process Path';
   GOoDA.Columns.MODULEPATH = 'Module Path';
+  GOoDA.Columns.FUNCTIONID = 'FunctionID';
   
   GOoDA.Columns.UNHALTEDCYCLES = 'unhalted_core_cycles';
   GOoDA.Columns.STALLCYCLES = 'uops_retired:stall_cycles';

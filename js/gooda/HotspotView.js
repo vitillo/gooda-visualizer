@@ -113,15 +113,13 @@ require(["dojo/_base/declare",
           var paths;
           var module;
           var processID;
+          var selectedFunction;
 
           if(!data)
             table.selectRows([]);
           else{
             processID = data.parent ? data.parent.id : data.id;
             process = data[GOoDA.Columns.PROCESSPATH] || data.parent[GOoDA.Columns.PROCESSPATH];
-            
-            table.selectRows([data]);
-            
             if(data[GOoDA.Columns.MODULEPATH]){
               paths = data[GOoDA.Columns.MODULEPATH].split(/(\\|\/)/g);
               module = paths[paths.length - 1];
@@ -130,34 +128,41 @@ require(["dojo/_base/declare",
             criterias[GOoDA.Columns.PROCESS] = process;
             criterias[GOoDA.Columns.MODULE] = module;
             
-            if(self.selection.processID != processID){
-              self.cgLoadScreen && self.cgLoadScreen.show();
-                       
-              self.loadResource(self.fileLoader.getCGData, 'CGData', {
-                processID: data.id,
-                success: function(data){
-                  self._buildCGView(data);
-                  self.cgLoadScreen.hide();
-                },
-                failure: function(){
-                  self.cgLoadScreen.hide();
-                  self.cgView.empty();
-                }
+            self.unselect();
+            table.selectRows([data]);
+
+            if(self.hotFunctionView){
+              self.hotFunctionView.filter(criterias);
+
+              selectedFunction = self.hotFunctionView.select(function(row){
+                return true;
               });
+
+              selectedFunction && self.cgView && self.cgView.select(selectedFunction[GOoDA.Columns.FUNCTIONID]);
+            }
+            
+            if(self.selection.processID != processID){
+              if(self.cgLoadScreen){
+                self.cgLoadScreen.show();
+                self.loadResource(self.fileLoader.getCGData, 'CGData', {
+                  processID: data.id,
+                  success: function(data){
+                    self._buildCGView(data, selectedFunction[GOoDA.Columns.FUNCTIONID]);
+                    self.cgLoadScreen.hide();
+                  },
+                  failure: function(){
+                    self.cgLoadScreen.hide();
+                    self.cgView.empty();
+                  }
+                });
+              }
               
               self.selection.processID = processID;
             }
-            
-            if(self.selection.id != data.id && !self.hotFunctionView.getRow(self.selection.id)){
-              self.unselect();
-              self.selection.id = data.id;
-            }
           }
-          
-          self.hotFunctionView && self.hotFunctionView.filter(criterias);
         }
         
-      });     
+      });
       
       this.hotProcessView.toggleExpansion();
       this.resourceProcessed();
@@ -184,10 +189,11 @@ require(["dojo/_base/declare",
         container: self.functionContainer,
         source: GOoDA.Columns.FUNCTIONNAME,
         data: self.HotFunctionData,
+        expand: true,
         
         codeHandler: function(target, e, row, cell, data, table){
           table.selectRows([data]);
-          self.cgView && self.cgView.select(data.id);
+          self.cgView && self.cgView.select(data[GOoDA.Columns.FUNCTIONID]);
         },
 
         altCodeHandler: function(target, e, row, cell, data){
@@ -196,13 +202,14 @@ require(["dojo/_base/declare",
       });
 
       this.resourceProcessed();
+      this.hotFunctionView.toggleExpansion();
       delete this.HotFunctionData;
     },
     
     _openFunctionView: function(data){
       var processName = data[GOoDA.Columns.PROCESS];
       var functionName = data[GOoDA.Columns.FUNCTIONNAME];
-      var functionID = data.id;
+      var functionID = data[GOoDA.Columns.FUNCTIONID];
       var functionView = null;
       
       if((functionView = this.report.getView(this.report.name + functionID)))
@@ -250,12 +257,12 @@ require(["dojo/_base/declare",
       delete this.CGData;
     },
     
-    _buildCGView: function(data){
+    _buildCGView: function(data, selection){
       var self = this;
       
-      if(this.cgView)
-        this.cgView.reload(data);
-      else{
+      if(this.cgView){
+        this.cgView.reload(data, selection);
+      }else{
         this.cgView = new GOoDA.GraphPane({
           container: self.cgContainer,
           svg: data,
@@ -263,7 +270,7 @@ require(["dojo/_base/declare",
             var found = false;
             
             self.hotFunctionView.select(function(row){
-              if(row.id == funID){
+              if(!row['parent'] && row[GOoDA.Columns.FUNCTIONID] == funID){
                 found = true;
                 return true;
               }else
@@ -273,7 +280,14 @@ require(["dojo/_base/declare",
             return found;
           },
           altClickHandler: function(id){
-            self._openFunctionView(self.hotFunctionView.data.grid[id]);
+            var grid = self.hotFunctionView.data.grid;
+            
+            for(var i = 0; i < grid.length; i++){
+              if(!grid[i]['parent'] && grid[i][GOoDA.Columns.FUNCTIONID] == id){
+                self._openFunctionView(grid[i]);
+                return;
+              }
+            }
           }
         });
       }
@@ -282,7 +296,13 @@ require(["dojo/_base/declare",
     onLoaded: function(){
       this.hotProcessView && this.hotProcessView.select(function (row){
         return row.id === 0;        
-      })
+      });
+      
+      this.hotFunctionView && this.hotFunctionView.select(function (row){
+        return row.id === 0;        
+      });
+      
+      this.cgView && this.cgView.select(0);
       
       this.visualizer.gotoState({report: this.report.name}, true);
       this.state = this.visualizer.getState();

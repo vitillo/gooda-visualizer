@@ -98,17 +98,18 @@ require(["dojo/_base/declare",
     },
     
     unselect: function(){
-      this.svg && this.svg.SVGScrollView('select', -1);
+      this.svg && this.svg.SVGScrollView('select', -10);
     },
     
-    reload: function(svg){
+    reload: function(svg, selection){
       $(this.gPane.domNode).empty();
       
       this.svg = svg;
       $(this.gPane.domNode).append(this.svg);
       
       this.svg.SVGScrollView({
-        clickHandler: this.clickHandler
+        clickHandler: this.clickHandler,
+        selection: selection
       });
     },
     

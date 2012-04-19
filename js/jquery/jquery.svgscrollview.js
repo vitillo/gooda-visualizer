@@ -36,8 +36,12 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-(function() {   
-  function SVGScrollView(){ this.initialize.apply(this, arguments) }
+(function() {
+  function SVGScrollView(){ 
+    this.initialize.apply(this, arguments) 
+    this.select.call(this, arguments[1].selection)
+  }
+  
   SVGScrollView.prototype = {     
     initialize: function(container, options){
       var container = $(container);
@@ -58,8 +62,8 @@
       var width = parent.width();
       var height = parent.height();
 
-      var minX = (bbox.width < width) ? - (width - bbox.width)/2 :  0;
-      var minY = (bbox.height < height) ? - (height - bbox.height)/2 : 0;
+      var minX = (bbox.width < width) ? - (width - bbox.width)/2 :  + bbox.width/2;
+      var minY = (bbox.height < height) ? - (height - bbox.height)/2 : + bbox.height/2;
 
       viewbox.width = width;
       viewbox.height = height;
@@ -72,6 +76,7 @@
 
       setGrab();
       scrollTo(minX, minY);
+      zoom({x: parent.offset().left + width/2, y: parent.offset().top + height/2}, 0.85);
 
       $('a', container).each(function(){
         var group = $(this).parent();
@@ -181,7 +186,7 @@
 
         //If already visible don't center it
         if(multiple || Math.abs(center.x - nodeCoord.x) < width / 2 && Math.abs(center.y - nodeCoord.y) < height / 2)
-        return;
+          return;
 
         scrollTo(nodeCoord.x - center.x, nodeCoord.y - center.y);
       }

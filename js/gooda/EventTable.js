@@ -386,7 +386,6 @@ require(["dojo/_base/declare",
           column.cssClass = column.secondaryCssClass = "cycleLeaf";
 
         switch(column.id){
-          case GOoDA.Columns.FUNCTIONNAME:
           case GOoDA.Columns.SOURCE:
             column.id = 'code';
             column.cssClass = 'code';
@@ -394,6 +393,7 @@ require(["dojo/_base/declare",
             column.resizable = true;
             break;
 
+          case GOoDA.Columns.FUNCTIONNAME:
           case GOoDA.Columns.DISASSEMBLY:
           case GOoDA.Columns.PROCESSPATH:
             column.id = 'code';
