@@ -1,0 +1,9 @@
+ architecture:x86_64
+ family:6, model:45
+ num_sockets:2, num_cores:32
+ num_col:69
+ cpu_desc:Genuine Intel(R) CPU @ 2.60GHz
+ num_fixed:69
+ num_ordered:0
+ num_branch:8
+ num_sub_branch:4
