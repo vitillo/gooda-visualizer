@@ -52,6 +52,7 @@ require(["dojo/_base/declare",
       var self = this;
       var sortcol = "";
       var sortdir = false;
+      var sortDiff = null;
       var searchString = "";
       var sampleMode = true;
       var cycleMode = true;
@@ -109,13 +110,6 @@ require(["dojo/_base/declare",
         }else
           return sampleMode ? value : (value*column.period).toExponential(3);
       };
-      
-      function hexFormatter(row, cell, value, column, dataContext){
-        if(row == -1) return value; // summary row
-        if(value === undefined) return '';
-
-        return '0x' + value.toString(16);
-      }
       
       function sourceFormatter(row, cell, value, column, dataContext){
         return $('<div/>').text(value).html();
@@ -208,11 +202,21 @@ require(["dojo/_base/declare",
         var first = a.parent === undefined ? a : a.parent;
         var second = b.parent === undefined ? b : b.parent;
         var x = first[sortcol], y = second[sortcol];
-
-        if(x == y)
-          return sortdir ? (a.id > b.id ? 1 : -1) : (a.id > b.id ? -1 : 1)
+        var diff = sortDiff(x, y);
+        
+        if(diff)
+          return (diff > 0 ? -1 : 1);
         else
-          return (x > y ? -1 : 1);
+          return sortdir ? (a.id > b.id ? 1 : -1) : (a.id > b.id ? -1 : 1);
+      }
+      
+      function hexDiff(a, b){
+        var diff = a.length - b.length;
+        return diff ? diff : ((a == b) ? 0 : ((a > b) ? 1 : -1))
+      }
+      
+      function defaultDiff(a, b){
+        return a - b;
       }
 
       function filter(item) {
@@ -345,6 +349,18 @@ require(["dojo/_base/declare",
           if(sortcol == 'code')
             sortcol = 'id';
 
+          switch(sortCol.id){
+            case GOoDA.Columns.OFFSET:
+            case GOoDA.Columns.LENGTH:
+            case GOoDA.Columns.ADDRESS:
+              sortDiff = hexDiff;
+              break;
+              
+            default:
+              sortDiff = defaultDiff;
+              break;
+          }
+          
           dataView.sort(comparer,sortAsc);
           restoreSelectedRows();
         };
@@ -405,9 +421,6 @@ require(["dojo/_base/declare",
           case GOoDA.Columns.OFFSET:
           case GOoDA.Columns.LENGTH:
           case GOoDA.Columns.ADDRESS:
-            column.formatter = hexFormatter;
-            break;
-
           case GOoDA.Columns.PRINCIPALLINENUMBER:
           case GOoDA.Columns.INITIALLINENUMBER:
           case GOoDA.Columns.LINENUMBER:

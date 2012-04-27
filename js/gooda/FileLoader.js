@@ -270,19 +270,21 @@ require(["dojo/_base/declare"], function(declare){
 
         switch(column.field){
           case GOoDA.Columns.FUNCTIONNAME:
-            column.summary = this.getBlankString(column.summary, undefined, '');
+            column.summary = this.getBlankString(column.summary, '');
             break;
             
           case GOoDA.Columns.PROCESSPATH:
-            column.summary = this.getBlankString(column.summary + 3, undefined, '');
+            column.summary = this.getBlankString(column.summary + 3, '');
             break;
 
           case GOoDA.Columns.ADDRESS:
-            column.summary = this.getBlankString(column.summary, true, '');
+          case GOoDA.Columns.OFFSET:
+          case GOoDA.Columns.LENGTH:
+            column.summary = this.getBlankString(column.summary);
             break;
 
           case GOoDA.Columns.LINENUMBER:
-            column.summary = this.getBlankString(column.summary, false, '');
+            column.summary = this.getBlankString(column.summary, '', true);
             break;
 
           case GOoDA.Columns.SOURCE:
@@ -295,15 +297,9 @@ require(["dojo/_base/declare"], function(declare){
             column.summary = this.getBlankString(column.summary);
             break;
 
-
-          case GOoDA.Columns.OFFSET:
-          case GOoDA.Columns.LENGTH:
-            column.summary = this.getBlankString(column.summary, true);
-            break;
-
           case GOoDA.Columns.PRINCIPALLINENUMBER:
           case GOoDA.Columns.INITIALLINENUMBER:
-            column.summary = this.getBlankString(column.summary, false);
+            column.summary = this.getBlankString(column.summary, true);
             break;
 
           default:
@@ -312,13 +308,10 @@ require(["dojo/_base/declare"], function(declare){
       }
     },
 
-    getBlankString: function(summaryLength, isHex, prefix){   
+    getBlankString: function(summaryLength, prefix, isNum){   
       prefix = prefix || '';
 
-      if(isHex === false)
-        summaryLength = String(summaryLength).length;
-      else if(isHex === true)
-        summaryLength = summaryLength.toString(16).length + 2;
+      isNum && (summaryLength = String(summaryLength).length);
 
       if(summaryLength > prefix.length){
         summaryLength = summaryLength - prefix.length;
