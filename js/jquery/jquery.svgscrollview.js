@@ -81,6 +81,7 @@
       $('a', container).each(function(){
         var group = $(this).parent();
         group.attr('id', this.href.baseVal);
+        this.setAttribute('xlink:title', group.children('title').text());
       }).click(function (event){
         var link = this.href.baseVal;
         var group = $(this).parent();
