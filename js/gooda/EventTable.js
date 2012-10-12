@@ -194,8 +194,11 @@ require(["dojo/_base/declare",
       }
       
       function buildField(column, cycles, percentage){
+        var spacerLen = 0;
         percentage = percentage !== undefined ? " (" + percentage + "%)" : "";
-        return cycles.toString() + new Array(column.maxPercentageLength + 5 - percentage.length).join(' ') + percentage;
+        spacerLen = column.maxPercentageLength + 5 - percentage.length;
+        spacerLen = spacerLen > 0 ? spacerLen : 0;
+        return cycles.toString() + new Array(spacerLen).join(' ') + percentage;
       }
 
       function comparer(a,b){
