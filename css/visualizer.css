@@ -43,20 +43,6 @@ body.claro{
   white-space: pre; 
 }
 
-.slick-cell .toggle {
-  height: 9px;
-  width: 18px;
-  display: inline-block;
-}
-
-.slick-cell .toggle.expand {
-  background: url(../images/expand.gif) no-repeat center center;
-}
-
-.slick-cell .toggle.collapse {
-  background: url(../images/collapse.gif) no-repeat center center;
-}
-
 .dijitAccordionText{
   font-weight: bold;
 }
@@ -65,6 +51,20 @@ body.claro{
   color: #044080;
   font-weight: bold;
   font-size: 11px;
+}
+
+.toggle {
+  height: 9px;
+  width: 18px;
+  display: inline-block;
+}
+
+.toggle.expand {
+  background: url(../images/expand.gif) no-repeat center center;
+}
+
+.toggle.collapse {
+  background: url(../images/collapse.gif) no-repeat center center;
 }
 
 .visualizerIcon {

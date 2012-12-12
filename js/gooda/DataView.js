@@ -60,6 +60,7 @@ require(["dojo/_base/declare",
 
     loadResource: function(loader, store, params){
       var self = this;
+
       var args = {
         report: this.report.name,
         functionID: this.functionID,

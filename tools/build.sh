@@ -16,6 +16,7 @@ cat $SRCDIR/css/{slick.grid,grid.theme,visualizer}.css \
     | $COMPRESS --type css -o $RELDIR/css/visualizer.css
 
 cp -R $SRCDIR/{images,reports,tools/index.html} $RELDIR
+cp -R $SRCDIR/java $RELDIR
 cp -R $SRCDIR/js/{dijit,dojo,dojox} $RELDIR/js
 tar --exclude *.uncompressed.js --exclude .DS_Store -czf $SRCDIR/builds/visualizer$(date +"%m%d").tar.gz -C $SRCDIR/tools/ visualizer
 rm -rf $RELDIR

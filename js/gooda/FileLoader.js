@@ -55,7 +55,7 @@ require(["dojo/_base/declare"], function(declare){
       var parent = null;
       var curProc = 0;
 
-      this.readGrid('reports/' + request.report + '/spreadsheets/process.csv', function(data){
+      this.readGrid(request.report + '/spreadsheets/process.csv', function(data){
         request.success(self.convert(1, 3, data, undefined, function(iRow, oRow, convertedData){
           var proc = iRow[1];
 
@@ -72,7 +72,7 @@ require(["dojo/_base/declare"], function(declare){
       var self = this;
       var curFunID = -1;
 
-      this.readGrid('reports/' + request.report + '/spreadsheets/function_hotspots.csv', function(data){
+      this.readGrid(request.report + '/spreadsheets/function_hotspots.csv', function(data){
         request.success(self.convert(3, 8, data, undefined, function(iRow, oRow, convertedData){
           var funID = iRow[1];
           
@@ -93,7 +93,7 @@ require(["dojo/_base/declare"], function(declare){
       var parent = null;
       var curBB = 0;
 
-      this.readGrid('reports/' + request.report + '/spreadsheets/asm/' + request.functionID + '_asm.csv', function(data){
+      this.readGrid(request.report + '/spreadsheets/asm/' + request.functionID + '_asm.csv', function(data){
         request.success(self.convert(2, 8, data, function(convertedData){
           convertedData.sourceLines = {};
           convertedData.functionName = convertedData.columns[5].summary;
@@ -113,19 +113,19 @@ require(["dojo/_base/declare"], function(declare){
     getSRCData: function(request){
       var self = this;
 
-      this.readGrid('reports/' + request.report + '/spreadsheets/src/' + request.functionID + '_src.csv', function(data){
+      this.readGrid(request.report + '/spreadsheets/src/' + request.functionID + '_src.csv', function(data){
         request.success(self.convert(1, 3, data));
       }, request.failure);
     },
 
     getCFGData: function(request){    
-      this.readFile('reports/' + request.report + '/spreadsheets/cfg/' + request.functionID + '_cfg.svg', function(data){
+      this.readFile(request.report + '/spreadsheets/cfg/' + request.functionID + '_cfg.svg', function(data){
         request.success($(data.substring(data.indexOf('<svg'))).last());
       }, request.failure);
     },
     
     getCGData: function(request){
-      this.readFile('reports/' + request.report + '/spreadsheets/cg/' + request.processID + '_cg.svg', function(data){
+      this.readFile(request.report + '/spreadsheets/cg/' + request.processID + '_cg.svg', function(data){
         request.success($(data.substring(data.indexOf('<svg'))).last());
       }, request.failure);
     },
@@ -321,6 +321,18 @@ require(["dojo/_base/declare"], function(declare){
     },
 
     readFile: function(file, success, error){
+      if(file.indexOf("reports/") != 0){
+        var response = jsFs.read(file);
+
+        if(response){
+          success(response);
+        }else{
+          error();
+        }
+
+        return;
+      }
+
       $.ajax({
         url: file,
         dataType: 'text',
@@ -330,6 +342,18 @@ require(["dojo/_base/declare"], function(declare){
     },
 
     readGrid: function(file, success, error){
+      if(file.indexOf("reports/") != 0){
+        var response = jsFs.read(file);
+
+        if(response){
+          success(eval('(' + response + ')'));
+        }else{
+          error();
+        }
+
+        return;
+      }
+
       $.ajax({
         url: file,
         dataType: 'text',

@@ -69,11 +69,14 @@ require(["dojo/_base/declare",
     },
     
     buildView: function(){
+      var self = this;
+
       if(this.HotProcessData === undefined || this.HotFunctionData === undefined || this.CGData === undefined)
         return;
-      else if(this.HotProcessData === null || this.HotFunctionData === null)
+      else if(this.HotProcessData === null || this.HotFunctionData === null){
         this.failure('Missing report data!');
-      else{
+        this.visualizer.unloadReport(this.report.name);
+       }else{
         this.buildHotProcessView();
         this.buildHotFunctionView();
         this.buildCGView();
