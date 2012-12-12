@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2012, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -7,90 +7,100 @@
 //>>built
 define("dojo/aspect",[],function(){
 "use strict";
-function _1(_2,_3,_4,_5){
-var _6=_2[_3];
-var _7=_3=="around";
-var _8;
-if(_7){
-var _9=_4(function(){
-return _6.advice(this,arguments);
+var _1,_2=0;
+function _3(_4,_5,_6,_7){
+var _8=_4[_5];
+var _9=_5=="around";
+var _a;
+if(_9){
+var _b=_6(function(){
+return _8.advice(this,arguments);
 });
-_8={remove:function(){
-_8.cancelled=true;
-},advice:function(_a,_b){
-return _8.cancelled?_6.advice(_a,_b):_9.apply(_a,_b);
+_a={remove:function(){
+_a.cancelled=true;
+},advice:function(_c,_d){
+return _a.cancelled?_8.advice(_c,_d):_b.apply(_c,_d);
 }};
 }else{
-_8={remove:function(){
-var _c=_8.previous;
-var _d=_8.next;
-if(!_d&&!_c){
-delete _2[_3];
+_a={remove:function(){
+var _e=_a.previous;
+var _f=_a.next;
+if(!_f&&!_e){
+delete _4[_5];
 }else{
-if(_c){
-_c.next=_d;
+if(_e){
+_e.next=_f;
 }else{
-_2[_3]=_d;
+_4[_5]=_f;
 }
-if(_d){
-_d.previous=_c;
+if(_f){
+_f.previous=_e;
 }
 }
-},advice:_4,receiveArguments:_5};
+},id:_2++,advice:_6,receiveArguments:_7};
 }
-if(_6&&!_7){
-if(_3=="after"){
-var _e=_6;
-while(_e){
-_6=_e;
-_e=_e.next;
+if(_8&&!_9){
+if(_5=="after"){
+var _10=_8;
+while(_10){
+_8=_10;
+_10=_10.next;
 }
-_6.next=_8;
-_8.previous=_6;
+_8.next=_a;
+_a.previous=_8;
 }else{
-if(_3=="before"){
-_2[_3]=_8;
-_8.next=_6;
-_6.previous=_8;
+if(_5=="before"){
+_4[_5]=_a;
+_a.next=_8;
+_8.previous=_a;
 }
 }
 }else{
-_2[_3]=_8;
+_4[_5]=_a;
 }
-return _8;
+return _a;
 };
-function _f(_10){
-return function(_11,_12,_13,_14){
-var _15=_11[_12],_16;
-if(!_15||_15.target!=_11){
-_16=_11[_12]=function(){
-var _17=arguments;
-var _18=_16.before;
-while(_18){
-_17=_18.advice.apply(this,_17)||_17;
-_18=_18.next;
+function _11(_12){
+return function(_13,_14,_15,_16){
+var _17=_13[_14],_18;
+if(!_17||_17.target!=_13){
+_13[_14]=_18=function(){
+var _19=_2;
+var _1a=arguments;
+var _1b=_18.before;
+while(_1b){
+_1a=_1b.advice.apply(this,_1a)||_1a;
+_1b=_1b.next;
 }
-if(_16.around){
-var _19=_16.around.advice(this,_17);
+if(_18.around){
+var _1c=_18.around.advice(this,_1a);
 }
-var _1a=_16.after;
-while(_1a){
-_19=_1a.receiveArguments?_1a.advice.apply(this,_17)||_19:_1a.advice.call(this,_19);
-_1a=_1a.next;
+var _1d=_18.after;
+while(_1d&&_1d.id<_19){
+if(_1d.receiveArguments){
+var _1e=_1d.advice.apply(this,_1a);
+_1c=_1e===_1?_1c:_1e;
+}else{
+_1c=_1d.advice.call(this,_1c,_1a);
 }
-return _19;
+_1d=_1d.next;
+}
+return _1c;
 };
-if(_15){
-_16.around={advice:function(_1b,_1c){
-return _15.apply(_1b,_1c);
+if(_17){
+_18.around={advice:function(_1f,_20){
+return _17.apply(_1f,_20);
 }};
 }
-_16.target=_11;
+_18.target=_13;
 }
-var _1d=_1((_16||_15),_10,_13,_14);
-_13=null;
-return _1d;
+var _21=_3((_18||_17),_12,_15,_16);
+_15=null;
+return _21;
 };
 };
-return {before:_f("before"),around:_f("around"),after:_f("after")};
+var _22=_11("after");
+var _23=_11("before");
+var _24=_11("around");
+return {before:_23,around:_24,after:_22};
 });

@@ -1,15 +1,17 @@
 /*
-	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2012, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
 
 //>>built
-define("dojo/dom",["./_base/sniff","./_base/lang","./_base/window"],function(_1,_2,_3){
+define("dojo/dom",["./sniff","./_base/lang","./_base/window"],function(_1,_2,_3){
+if(_1("ie")<=7){
 try{
 document.execCommand("BackgroundImageCache",false,true);
 }
 catch(e){
+}
 }
 var _4={};
 if(_1("ie")){
