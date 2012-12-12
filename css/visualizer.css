@@ -15,6 +15,11 @@ body.claro{
   background: url(../images/bodyBG.gif) repeat-x scroll left top #FFFFFF;
 }
 
+.claro .dijitTreeExpando{
+  width: 0;
+  height: 0;
+}
+
 :focus { outline-style: none; }
 
 .slick-header-column-secondary.cycleBranch, .slick-cell.cycleBranch{

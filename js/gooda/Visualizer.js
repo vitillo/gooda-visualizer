@@ -59,7 +59,6 @@ require(["dijit/layout/BorderContainer",
     constructor: function(params){
       var self = this;
 
-
       var source = {
         identifier: 'report', 
         label: 'report', 
@@ -86,7 +85,6 @@ require(["dijit/layout/BorderContainer",
         }
       }, function(){
       })
-
       
       var reportModel = new ForestStoreModel({
         store: this.reportStore
