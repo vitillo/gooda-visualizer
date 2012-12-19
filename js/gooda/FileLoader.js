@@ -322,7 +322,13 @@ require(["dojo/_base/declare"], function(declare){
 
     readFile: function(file, success, error){
       if(file.indexOf("reports/") != 0){
-        var response = jsFs.read(file);
+        var response;
+
+        try{
+          response = jsFs.read(file);
+        }catch(e){
+          response = null;
+        }
 
         if(response){
           success(response);
@@ -343,8 +349,14 @@ require(["dojo/_base/declare"], function(declare){
 
     readGrid: function(file, success, error){
       if(file.indexOf("reports/") != 0){
-        var response = jsFs.read(file);
+        var response = null;
 
+        try{
+          response = jsFs.read(file);
+        }catch(e){
+          response = null;
+        }
+       
         if(response){
           success(eval('(' + response + ')'));
         }else{
