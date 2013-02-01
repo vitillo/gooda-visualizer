@@ -124,8 +124,10 @@ require(["dijit/layout/BorderContainer",
         id: "navigationMenu"
       });
       
+      //TODO: find a better way to open directories without using a java applet
       this.reportExplorer = new Tree({
-        title: "Reports <span id='loadButton' title='Open report from local drive' class='toggle expand' style='float: right; margin-top:3px'></span>",
+        title: "Reports",
+        //title: "Reports <span id='loadButton' title='Open report from local drive' class='toggle expand' style='float: right; margin-top:3px'></span>",
         model: reportModel,
         showRoot: false,
         persist: false,
@@ -133,7 +135,7 @@ require(["dijit/layout/BorderContainer",
         onClick: function(e){
           self.loadReport(e.report);
         },
-        onLoad: function(){
+        /*onLoad: function(){
           $('#loadButton').click(function(){
             if(!jsFs || !jsFs.explore){
               new GOoDA.Notification({
@@ -145,7 +147,7 @@ require(["dijit/layout/BorderContainer",
               report && self.loadReport(report);
             }
           });
-        }
+        }*/
       });
 
       // http://bugs.dojotoolkit.org/ticket/14554
