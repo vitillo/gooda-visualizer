@@ -135,15 +135,15 @@ require(["dijit/layout/BorderContainer",
         },
         onLoad: function(){
           $('#loadButton').click(function(){
-            if(!jsFs){
+            if(!jsFs || !jsFs.explore){
               new GOoDA.Notification({
                 title: 'Warning', 
-                content: 'Java not enabled!'
+                content: 'Java applet not enabled!'
               });
+            }else{
+              var report = jsFs.explore();
+              report && self.loadReport(report);
             }
-
-            var report = jsFs.explore();
-            report && self.loadReport(report);
           });
         }
       });
