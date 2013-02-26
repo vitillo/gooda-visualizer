@@ -90,6 +90,14 @@ body.claro{
   background-size: 18px 18px;
 }
 
+.help {
+  text-align: justify; 
+}
+
+.help p{
+  margin: 0px 0px;
+}
+
 #viewport{
   height: 100%;
   width: 100%;
@@ -114,14 +122,6 @@ body.claro{
   display:inline;
   text-shadow: 1px 1px 2px #044080;
   color:#FFF;
-}
-
-#tutorial {
-  text-align: justify; 
-}
-
-#tutorial p{
-  margin: 0px 0px;
 }
 
 #tutorial img{
