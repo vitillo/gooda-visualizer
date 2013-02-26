@@ -81,7 +81,11 @@ require(["dijit/layout/BorderContainer",
             continue;
           }
 
-          self.reportStore.newItem({report: "reports/" + report});
+          try{
+            self.reportStore.newItem({report: "reports/" + report});
+          }catch(err){
+            //report loaded through GET parameter
+          }
         }
       }, function(){
       })
