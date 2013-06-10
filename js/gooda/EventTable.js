@@ -74,6 +74,9 @@ require(["dojo/_base/declare",
           var cvalue;
           var referenceCycles = row >= 0 ? dataContext['unhalted_core_cycles'] : self.data.referenceCycles;
 
+          if(column.name == GOoDA.Columns.UNHALTEDCYCLES)
+            referenceCycles = column.summary;
+
           if(sampleMode && cycleMode){
             cvalue = Math.floor(value*column.period*column.penalty*inverseReferencePeriod);
 
@@ -399,7 +402,9 @@ require(["dojo/_base/declare",
       function addEventColumn(column){
         $.extend(column, {flex: true, sortable: true});
 
-        if(column.isEvent && column.isCycle && column.children.length)
+        if(column.name == GOoDA.Columns.UNHALTEDCYCLES)
+          column.cssClass = column.secondaryCssClass = "cycleLeafMain";
+        else if(column.isEvent && column.isCycle && column.children.length)
           column.cssClass = column.secondaryCssClass = "cycleBranch";
         else if(column.isEvent && column.isCycle)
           column.cssClass = column.secondaryCssClass = "cycleLeaf";

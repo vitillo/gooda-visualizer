@@ -27,6 +27,10 @@
   float: left;
 }
 
+.slick-header-column-secondary {
+  overflow: visible;
+}
+
 .slick-header-column{
   overflow:visible;
   background-color:transparent;
@@ -89,10 +93,11 @@
   font-size: 0.1px;
   display: block;
   cursor: col-resize;
-  width: 4px;
-  right: 0px;
+  width: 7px;
+  right: -4px;
   top: 0;
   height: 100%;
+  z-index:9999;
 }
 
 .slick-sortable-placeholder {

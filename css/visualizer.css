@@ -27,6 +27,11 @@ body.claro{
   white-space: pre;
 }
 
+.slick-header-column-secondary.cycleLeafMain, .slick-cell.cycleLeafMain{
+  color: red;
+  white-space: pre;
+}
+
 .slick-header-column-secondary.cycleLeaf, .slick-cell.cycleLeaf{
   color: green;
   white-space: pre;
