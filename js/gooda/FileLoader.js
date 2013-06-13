@@ -246,7 +246,6 @@ require(["dojo/_base/declare"], function(declare){
           }
         }
 
-        oRow['cycles'] = cycles;
         if(!oRow.parent && cycles >= maxCycles){
           maxCycles = cycles;
           maxRow = oRow;
