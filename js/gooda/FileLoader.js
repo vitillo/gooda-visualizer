@@ -165,7 +165,8 @@ require(["dojo/_base/declare"], function(declare){
           isEvent: i >= firstEventColumn,
           isHybrid: true,
           maxPercentageLength: 0,
-          expanded: false
+          expanded: false,
+          visible: true
         };
       }
 

@@ -72,10 +72,26 @@
   background: url(../images/sortDesc.gif);
 }
 
+.slick-hide-indicator{
+  position: absolute;
+  bottom: 8px;
+  width: 9px;
+  height: 9px;
+  background: url(../images/hide.gif);
+}
+
+.slick-hide-indicator-first{
+  left: 4px;
+}
+
+.slick-hide-indicator-second{
+  left: 15px;
+}
+
 .slick-expand-indicator{
   position: absolute;
   left: 4px;
-  bottom: 9px;
+  bottom: 8px;
   width: 9px;
   height: 9px;
 }

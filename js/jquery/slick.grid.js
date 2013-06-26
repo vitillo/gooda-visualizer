@@ -509,7 +509,7 @@ if (!jQuery.fn.drag) {
 
         function updateColumnsVisibility(){
             function updateColumnVisibility(column){
-                if(!column.summary) return;
+                if(!column.summary || !column.visible) return;
                 
                 columns.push(column);
                 if(column.expanded === true){
@@ -533,6 +533,7 @@ if (!jQuery.fn.drag) {
             for (i = 0; i < columns.length; i++) {
                 var columnCopy = $.extend({}, columns[i]);
                 var m = columns[i] = $.extend(columns[i], columnDefaults, columnCopy);
+                var hideButton = null;
 
                 var header = $("<div class='ui-state-default slick-header-column-secondary " + (m.secondaryCssClass ? m.secondaryCssClass : "") + "' />")
                     .width((m.currentWidth || m.width) - headerColumnWidthDiff)
@@ -554,7 +555,26 @@ if (!jQuery.fn.drag) {
                                 event.stopPropagation();
                             }
                     })(m))
+
+
+                    hideButton = $('<span/>', {
+                        'class': "slick-hide-indicator slick-hide-indicator-second"
+                    });
+                    header.prepend(hideButton);
+                }else{
+                    hideButton = $('<span/>', {
+                        'class': "slick-hide-indicator slick-hide-indicator-first"
+                    });
+                    header.prepend(hideButton);
                 }
+
+                hideButton.bind('click', (function(column){
+                        return function(event){
+                            column.visible = false;
+                            setColumns(columnDefinition);
+                            event.stopPropagation();
+                        }
+                })(m));
 
                 if (m.sortable) {
                     header.append("<span class='slick-sort-indicator' />");

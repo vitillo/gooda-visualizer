@@ -147,6 +147,15 @@ require(["dojo/_base/declare",
           }
         });
 
+        var unhideButton = new Button({
+          label: 'Unhide Columns',
+          showLabel: false,
+          iconClass: "dijitEditorIcon dijitEditorIconUndo",
+          onClick: function(){
+            self.unhideColumns();
+          }
+        });
+
         var cyclesButton = new Button({
           title: 'Cycles',
           label: 'Cycles',
@@ -175,6 +184,7 @@ require(["dojo/_base/declare",
 
         if(self.expand)
           toolbar.addChild(expandButton);
+        toolbar.addChild(unhideButton);
         toolbar.addChild(cyclesButton);
         toolbar.addChild(samplesButton);
         toolbar.addChild(searchBox);
@@ -478,6 +488,14 @@ require(["dojo/_base/declare",
         grid.invalidate();
         dataView.refresh();
         restoreSelectedRows();
+      }
+
+      this.unhideColumns = function(){
+        for(var i = 0; i < this.columns.length; i++){
+          this.columns[i].visible = true;
+        }
+
+        grid.setColumns(this.columns);
       }
 
       this.unselect = function(){
