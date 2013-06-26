@@ -572,6 +572,7 @@ if (!jQuery.fn.drag) {
                         return function(event){
                             column.visible = false;
                             setColumns(columnDefinition);
+                            options.hideColumnHandler && options.hideColumnHandler(column);
                             event.stopPropagation();
                         }
                 })(m));

@@ -59,6 +59,6 @@ require(["dojo/_base/declare",
     
     getView: function(name){
       return array.filter(this.container.getChildren(), function(w){ return w.name == name})[0];
-    }
+    },
   })
 });

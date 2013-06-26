@@ -1,7 +1,7 @@
 /*
   Visualizer for the Generic Optimization Data Analyzer, Copyright (c)
   2012, The Regents of the University of California, through Lawrence
-  Berkeley National Laboratory (subject to receipt of any required
+e Berkeley National Laboratory (subject to receipt of any required
   approvals from the U.S. Dept. of Energy).  All rights reserved.
   
   This code is derived from software contributed by Roberto Agostino 
@@ -152,7 +152,7 @@ require(["dojo/_base/declare",
           showLabel: false,
           iconClass: "dijitEditorIcon dijitEditorIconUndo",
           onClick: function(){
-            self.unhideColumns();
+            self.report.notifyViews({id: 'unhideColumns'});
           }
         });
 
@@ -203,6 +203,7 @@ require(["dojo/_base/declare",
           syncColumnCellResize: true,
           enableCellNavigation: false,
           enableColumnReorder: false,
+          hideColumnHandler: self.hideColumnHandler
         }; 
       }
       
@@ -496,6 +497,21 @@ require(["dojo/_base/declare",
         }
 
         grid.setColumns(this.columns);
+      }
+
+      this.hideColumn = function(name){
+        for(var i = 0; i < this.columns.length; i++){
+          var column = this.columns[i];
+
+          if(column.name == name){
+            if(column.visible){
+              column.visible = false;
+              grid.setColumns(this.columns);
+            }
+
+            break;
+          }
+        }
       }
 
       this.unselect = function(){

@@ -95,6 +95,10 @@ require(["dojo/_base/declare",
     
     onResize: function(widget, wrapper){
       aspect.after(widget, 'resize', wrapper);
+    },
+
+    notify: function(ev){
+      this[ev.id](ev.payload);
     }
   })
 });

@@ -69,6 +69,13 @@ require(["dojo/_base/declare",
       this.container.addChild(view);
       this.container.selectChild(view);
       firstLoad && this.onLoadHandler && this.onLoadHandler(this);
+    },
+
+    notifyViews: function(ev){
+      var children = this.container.getChildren();
+
+      for(var i = 0; i < children.length; i++)
+        children[i].goodaView.notify(ev);
     }
   });
   

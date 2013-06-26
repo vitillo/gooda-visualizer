@@ -46,7 +46,7 @@ require(["dojo/_base/declare",
   declare("GOoDA.FunctionView", GOoDA.DataView, {
     constructor: function(params){
       var self = this;
-    
+
       declare.safeMixin(this, params);
       
       this.resourcesToLoad = 3;
@@ -94,9 +94,20 @@ require(["dojo/_base/declare",
       });
 
       this.container.addChild(this.asmContainer);
+      this.container.goodaView = this;
       this.report.addView(this.container);
       
+      if(this.hiddenColumns){
+        for(var i = 0; i < this.ASMData.columns.length; i++){
+          var c = this.ASMData.columns[i];
+
+          if(this.hiddenColumns[c.name])
+            c.visible = false;
+        }
+      }
+
       this.asmView = new GOoDA.EventTable({
+        report: self.report,
         container: self.asmContainer,
         source: 'Disassembly',
         data: self.ASMData,
@@ -105,6 +116,10 @@ require(["dojo/_base/declare",
         
         rowCssClasses: function(d){ 
           return !d.parent ? " parent" : "";
+        },
+
+        hideColumnHandler: function(column){
+          self.report.notifyViews({id: 'hideColumn', payload: column.name});
         },
         
         codeHandler: function(target, e, row, cell, item, table){           
@@ -146,12 +161,25 @@ require(["dojo/_base/declare",
       
       this.container.addChild(this.srcContainer);
     
+      if(this.hiddenColumns){
+        for(var i = 0; i < this.SRCData.columns.length; i++){
+          var c = this.SRCData.columns[i];
+
+          if(this.hiddenColumns[c.name])
+            c.visible = false;
+        }
+      }
+
       this.srcView = new GOoDA.EventTable({
+        report: self.report,
         container: self.srcContainer,
         source: 'Source',
         data: self.SRCData,
         
         rowCssClasses: function(d){ return d.highlight ? " parent" : "";},
+        hideColumnHandler: function(column){
+          self.report.notifyViews({id: 'hideColumn', payload: column.name});
+        },
         codeHandler: function(target, e, row, cell, item, table){
           if(!item.highlight) return;
 
@@ -223,6 +251,16 @@ require(["dojo/_base/declare",
       delete self.CFGData;
     },
     
+    unhideColumns: function(){
+      this.asmView && this.asmView.unhideColumns();
+      this.srcView && this.srcView.unhideColumns();
+    },
+
+    hideColumn: function(column){
+      this.asmView && this.asmView.hideColumn(column);
+      this.srcView && this.srcView.hideColumn(column);
+    },
+
     onLoaded: function(){
       var item = this.highlightedASMRow;
 
