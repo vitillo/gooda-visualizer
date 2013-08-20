@@ -341,6 +341,7 @@ require(["dojo/_base/declare"], function(declare){
 
       $.ajax({
         url: file,
+        cache: false,
         dataType: 'text',
         success: success,
         error: error
@@ -368,6 +369,7 @@ require(["dojo/_base/declare"], function(declare){
 
       $.ajax({
         url: file,
+        cache: false,
         dataType: 'text',
         success: function(response, status, xhr){
             success(eval('(' + response + ')'));
