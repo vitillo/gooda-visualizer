@@ -179,23 +179,11 @@ require(["dijit/layout/BorderContainer",
     },
     
     loadReport: function(name){
-      try{
-        this.reportStore.newItem({report: name});
-      }catch(err){
-      }
-
       GOoDA.Report.create(name);
     },
 
     unloadReport: function(name){
       var self = this;
-
-      try{
-        this.reportStore.fetchItemByIdentity({identity: name, onItem: function(item){
-            self.reportStore.deleteItem(item);
-        }});
-      }catch(e){
-      }
     },
     
     loadFunction: function(reportName, functionID){
