@@ -209,11 +209,8 @@ require(["dojo/_base/declare",
         codeHandler: function(target, e, row, cell, data, table){
           table.selectRows([data]);
           self.cgView && self.cgView.select(data[GOoDA.Columns.FUNCTIONID]);
-        },
-
-        altCodeHandler: function(target, e, row, cell, data){
           self._openFunctionView(data);
-        }
+        },
       });
 
       this.resourceProcessed();
