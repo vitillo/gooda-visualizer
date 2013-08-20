@@ -83,7 +83,6 @@ require(["dojo/_base/declare",
                              : functionName;
       
       this.asmContainer = new BorderContainer({
-        title: "Assembly Inspector",
         region: "center",
         style: "padding: 0",
         splitter: true
@@ -149,7 +148,6 @@ require(["dojo/_base/declare",
       }
       
       this.srcContainer = new BorderContainer({
-        title: "Source Inspector",
         region: "right",
         splitter: true,
         style: "padding: 0; width: " + ($(this.container.domNode).width()/2 - 6) + "px;"
@@ -218,7 +216,6 @@ require(["dojo/_base/declare",
       }
       
       this.cfgContainer = new BorderContainer({
-        title: "Control Flow Graph",
         style: "height: 33%; width: 100%; ",
         region: "bottom",
         splitter: true

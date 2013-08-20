@@ -88,7 +88,6 @@ require(["dojo/_base/declare",
       var self = this;
       
       this.processContainer = new BorderContainer({
-        title: "Hot Processes",
         region: "top",
         style: "height: 33%; padding: 0",
         splitter: true,
@@ -183,7 +182,6 @@ require(["dojo/_base/declare",
       var self = this;
       
       this.functionContainer = new BorderContainer({
-        title: "Hot Functions",
         region: "center",
         splitter: true,
         style: "padding: 0"
