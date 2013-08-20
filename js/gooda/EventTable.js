@@ -51,7 +51,6 @@ require(["dojo/_base/declare",
 
       var self = this;
       var sortcol = "";
-      var sortdir = false;
       var sortDiff = null;
       var searchString = "";
       var sampleMode = true;
@@ -138,6 +137,15 @@ require(["dojo/_base/declare",
           style: "padding: 0"
         });
 
+        var restoreButton = new Button({
+          label: 'Restore Order',
+          showLabel: false,
+          iconClass: "dijitEditorIcon dijitEditorIconIconPaste",
+          onClick: function(){
+            self.restoreOrder();
+          }
+        });
+
         var expandButton = new Button({
           label: 'Toggle Expansion',
           showLabel: false,
@@ -182,6 +190,7 @@ require(["dojo/_base/declare",
           }
         });
 
+        toolbar.addChild(restoreButton);
         if(self.expand)
           toolbar.addChild(expandButton);
         toolbar.addChild(unhideButton);
@@ -221,10 +230,11 @@ require(["dojo/_base/declare",
         var x = first[sortcol], y = second[sortcol];
         var diff = sortDiff(x, y);
         
-        if(diff)
+        if(diff){ // number
           return (diff > 0 ? -1 : 1);
-        else
-          return sortdir ? (a.id > b.id ? 1 : -1) : (a.id > b.id ? -1 : 1);
+        }else{ // string
+          return x > y ? 1 : -1;
+        }
       }
       
       function hexDiff(a, b){
@@ -361,10 +371,6 @@ require(["dojo/_base/declare",
 
         grid.onSort = function(sortCol, sortAsc) {
           sortcol = sortCol.id;
-          sortdir = sortAsc;
-
-          if(sortcol == 'code')
-            sortcol = 'id';
 
           switch(sortCol.id){
             case GOoDA.Columns.OFFSET:
@@ -422,16 +428,15 @@ require(["dojo/_base/declare",
 
         switch(column.id){
           case GOoDA.Columns.SOURCE:
-            column.id = 'code';
+          case GOoDA.Columns.DISASSEMBLY:
+            column.sortable = false;
             column.cssClass = 'code';
             column.formatter = sourceFormatter;
             column.resizable = true;
             break;
 
           case GOoDA.Columns.FUNCTIONNAME:
-          case GOoDA.Columns.DISASSEMBLY:
           case GOoDA.Columns.PROCESSPATH:
-            column.id = 'code';
             column.cssClass = 'code';
             column.formatter = treeFormatter;
             column.resizable = true;
@@ -474,6 +479,15 @@ require(["dojo/_base/declare",
         dataView.setItems(self.data.grid);
         dataView.setFilter(filter);
         dataView.endUpdate();
+      }
+
+      this.restoreOrder = function(){
+        sortcol = 'id';
+        sortDiff = defaultDiff;
+
+        grid.clearSorting();
+        dataView.sort(comparer, false);
+        restoreSelectedRows();
       }
 
       this.toggleExpansion = function(){

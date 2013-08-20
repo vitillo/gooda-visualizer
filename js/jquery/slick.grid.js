@@ -1123,6 +1123,11 @@ if (!jQuery.fn.drag) {
             $secondaryHeaders.children().eq(index).css("width", width - headerColumnWidthDiff);
         }
 
+        function clearSorting(){
+            $secondaryHeaders.children().removeClass("slick-header-column-sorted");
+            $secondaryHeaders.find(".slick-sort-indicator").removeClass("slick-sort-indicator-asc slick-sort-indicator-desc");
+        }
+
         function setSortColumn(columnId, ascending) {
             sortColumnId = columnId;
             sortAsc = ascending;
@@ -2611,6 +2616,7 @@ if (!jQuery.fn.drag) {
             "getGridPosition": getGridPosition,
             "restoreViewport" : restoreViewport,
             "minimizeWidth" : minimizeWidth,
+            "clearSorting" : clearSorting,
 
             // IEditor implementation
             "getEditController":    getEditController
