@@ -270,7 +270,7 @@ require(["dojo/_base/declare"], function(declare){
 
         switch(column.field){
           case GOoDA.Columns.FUNCTIONNAME:
-            column.summary = this.getBlankString(column.summary, '');
+            column.summary = this.getBlankString(column.summary + 3, '');
             break;
             
           case GOoDA.Columns.PROCESSPATH:
