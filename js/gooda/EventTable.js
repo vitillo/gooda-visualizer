@@ -212,8 +212,9 @@ require(["dojo/_base/declare",
           syncColumnCellResize: true,
           enableCellNavigation: false,
           enableColumnReorder: false,
-          hideColumnHandler: self.hideColumnHandler
-        }; 
+          hideColumnHandler: self.hideColumnHandler,
+          isDiff: self.data.isDiff
+        };
       }
       
       function buildField(column, cycles, percentage){

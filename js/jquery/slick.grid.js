@@ -268,6 +268,8 @@ if (!jQuery.fn.drag) {
         var $headers;
         var $secondaryHeaderScroller;
         var $secondaryHeaders;
+        var $baseHeaders;
+        var $diffHeaders;
         var $viewport;
         var $canvas;
         var $style;
@@ -364,7 +366,6 @@ if (!jQuery.fn.drag) {
             $headers = $("<div class='slick-header-columns' style='width:100000px; left:-10000px' />").appendTo($headerScroller);
 
             $secondaryHeaderScroller = $("<div class='slick-header-secondary ui-state-default' style='overflow:hidden;position:relative;' />").appendTo($container);
-            $secondaryHeaders = $("<div class='slick-header-columns-secondary' style='width:100000px; left:-10000px' />").appendTo($secondaryHeaderScroller);
 
             $viewport = $("<div class='slick-viewport' tabIndex='0' hideFocus='true' style='width:100%;overflow-x:auto;overflow-y:auto;outline:0;position:relative;' />").appendTo($container);          
             $canvas = $("<div class='grid-canvas' tabIndex='0' hideFocus='true' />").appendTo($viewport);
@@ -402,6 +403,8 @@ if (!jQuery.fn.drag) {
         function minimizeWidth(){           
             computeMinimumWidth();
             createColumnHeaders();
+            createDiffHeaders();
+            createBaseHeaders();
             createSecondaryHeaders();
             createCssRules();
             resizeCanvas(true);
@@ -528,6 +531,9 @@ if (!jQuery.fn.drag) {
 
         function createSecondaryHeaders() {
             var i;
+            if(!$secondaryHeaders)
+              $secondaryHeaders = $("<div class='slick-header-columns-secondary' style='width:100000px; left:-10000px' />").appendTo($secondaryHeaderScroller);
+
             $secondaryHeaders.empty();
 
             for (i = 0; i < columns.length; i++) {
@@ -583,10 +589,60 @@ if (!jQuery.fn.drag) {
             }
 
             setSortColumn(sortColumnId,sortAsc);
-            setupColumnResize();
+            setupColumnResize($secondaryHeaders);
             if (options.enableColumnReorder) {
                 setupColumnReorder();
             }
+        }
+
+        function createBaseHeaders() {
+            if(!options.isDiff)
+              return;
+
+            if(!$baseHeaders)
+              $baseHeaders = $("<div class='slick-header-columns-secondary' style='width:100000px; left:-10000px' />").appendTo($secondaryHeaderScroller);
+
+            $baseHeaders.empty();
+
+            for (i = 0; i < columns.length; i++) {
+                var columnCopy = $.extend({}, columns[i]);
+                var m = columns[i] = $.extend(columns[i], columnDefaults, columnCopy);
+                var hideButton = null;
+
+                var header = $("<div class='ui-state-default slick-header-column-secondary " + (m.secondaryCssClass ? m.secondaryCssClass : "") + "' />")
+                    .width((m.currentWidth || m.width) - headerColumnWidthDiff)
+                                        .html(getFormatter(columns[i])(-1, i, m.summaryBase ? m.summaryBase : "", m, columns))
+                    .attr("title", m.toolTip || m.name || "")
+                    .data("fieldId", m.id)
+                    .appendTo($baseHeaders);
+            }
+
+            setupColumnResize($baseHeaders);
+        }
+
+        function createDiffHeaders() {
+            if(!options.isDiff)
+              return;
+
+            if(!$diffHeaders)
+              $diffHeaders = $("<div class='slick-header-columns-secondary' style='width:100000px; left:-10000px' />").appendTo($secondaryHeaderScroller);
+
+            $diffHeaders.empty();
+
+            for (i = 0; i < columns.length; i++) {
+                var columnCopy = $.extend({}, columns[i]);
+                var m = columns[i] = $.extend(columns[i], columnDefaults, columnCopy);
+                var hideButton = null;
+
+                var header = $("<div class='ui-state-default slick-header-column-secondary " + (m.secondaryCssClass ? m.secondaryCssClass : "") + "' />")
+                    .width((m.currentWidth || m.width) - headerColumnWidthDiff)
+                                        .html(getFormatter(columns[i])(-1, i, m.summaryDiff ? m.summaryDiff : "", m, columns))
+                    .attr("title", m.toolTip || m.name || "")
+                    .data("fieldId", m.id)
+                    .appendTo($diffHeaders);
+            }
+
+            setupColumnResize($diffHeaders);
         }
 
         function createColumnHeaders() {
@@ -669,14 +725,15 @@ if (!jQuery.fn.drag) {
                         self.onColumnsReordered();
                     }
                     e.stopPropagation();
-                    setupColumnResize();
+                    setupColumnResize($secondaryHeaders);
                 }
             });
         }
 
-        function setupColumnResize() {
+        function setupColumnResize(headers) {
             var $col, j, c, pageX, columnElements, minPageX, maxPageX, firstResizable, lastResizable, originalCanvasWidth;
-            columnElements = $secondaryHeaders.children();
+            //columnElements = $secondaryHeaders.children();
+            columnElements = headers.children();
             columnElements.find(".slick-resizable-handle").remove();
             columnElements.each(function(i,e) {
                 if (columns[i].resizable) {
@@ -1121,6 +1178,11 @@ if (!jQuery.fn.drag) {
             }
             
             $secondaryHeaders.children().eq(index).css("width", width - headerColumnWidthDiff);
+
+            if($diffHeaders){
+              $diffHeaders.children().eq(index).css("width", width - headerColumnWidthDiff);
+              $baseHeaders.children().eq(index).css("width", width - headerColumnWidthDiff);
+            }
         }
 
         function clearSorting(){
@@ -1185,6 +1247,8 @@ if (!jQuery.fn.drag) {
             removeAllRows();
             computeMinimumWidth();
             createColumnHeaders();
+            createDiffHeaders();
+            createBaseHeaders();
             createSecondaryHeaders();
             removeCssRules();
             createCssRules();
