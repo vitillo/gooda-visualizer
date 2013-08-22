@@ -294,7 +294,7 @@ require(["dojo/_base/declare"], function(declare){
             if(convertedData.isDiff){
               column.summary = this.getBlankString(column.summary + 3, "reference");
               column.summaryDiff = "diff";
-              column.summaryBase = "base";
+              column.summaryBase = "new";
             }else
               column.summary = this.getBlankString(column.summary + 3, '');
 
@@ -304,7 +304,7 @@ require(["dojo/_base/declare"], function(declare){
             if(convertedData.isDiff){
               column.summary = this.getBlankString(column.summary + 3, "reference");
               column.summaryDiff = "diff";
-              column.summaryBase = "base";
+              column.summaryBase = "new";
             }else
               column.summary = this.getBlankString(column.summary + 3, '');
 
