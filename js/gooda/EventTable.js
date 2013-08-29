@@ -108,9 +108,13 @@ require(["dojo/_base/declare",
               cvalue = buildField(column, cvalue);
           }
 
-          return cvalue;
-        }else
-          return sampleMode ? value : (value*column.period).toExponential(3);
+          return value < 0 ? cvalue : " " + cvalue;
+        }else if(sampleMode){
+          return value < 0 ? value : " " + value;
+        }else{
+          var ret = (value*column.period).toExponential(3);
+          return value < 0 ? ret : " " + ret;
+        }
       };
       
       function sourceFormatter(row, cell, value, column, dataContext){
