@@ -74,7 +74,7 @@ require(["dojo/_base/declare",
           var cvalue;
 
           if(self.data.isDiff && dataContext._collapsed != undefined){
-            referenceCycles = self.data.grid[row + 2][column.id];
+            referenceCycles = self.data.grid[dataContext.id + 2][column.id];
           }else{
             if(column.name == GOoDA.Columns.UNHALTEDCYCLES)
               referenceCycles = column.summary;
@@ -487,7 +487,7 @@ require(["dojo/_base/declare",
 
       function fillTable(){
         dataView.beginUpdate();
-        dataView.setItems(self.data.grid);
+        dataView.setItems(self.data.grid.slice(0));
         dataView.setFilter(filter);
         dataView.endUpdate();
       }
