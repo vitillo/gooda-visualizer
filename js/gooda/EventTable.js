@@ -70,11 +70,17 @@ require(["dojo/_base/declare",
         if(!value) return '';
 
         if(column.isCycle){
+          var referenceCycles;
           var cvalue;
-          var referenceCycles = row >= 0 ? dataContext['unhalted_core_cycles'] : self.data.referenceCycles;
 
-          if(column.name == GOoDA.Columns.UNHALTEDCYCLES)
-            referenceCycles = column.summary;
+          if(self.data.isDiff && dataContext._collapsed != undefined){
+            referenceCycles = self.data.grid[row + 2][column.id];
+          }else{
+            if(column.name == GOoDA.Columns.UNHALTEDCYCLES)
+              referenceCycles = column.summary;
+            else
+              referenceCycles = row >= 0 ? dataContext['unhalted_core_cycles'] : self.data.referenceCycles;
+          }
 
           if(sampleMode && cycleMode){
             cvalue = Math.floor(value*column.period*column.penalty*inverseReferencePeriod);
