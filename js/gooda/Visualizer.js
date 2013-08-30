@@ -158,7 +158,6 @@ require(["dijit/layout/BorderContainer",
       this.reportExplorer.containerNode = this.reportExplorer.domNode;
       
       this.navigationMenu.addChild(this.reportExplorer);
-      this.viewport.addChild(this.header);
       this.viewport.addChild(this.navigationMenu);
       this.viewport.addChild(this.container);
       
