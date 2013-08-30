@@ -242,8 +242,9 @@ require(["dojo/_base/declare"], function(declare){
     convertGrid: function(fC, fEC, lEC, data, cData, custom){
       var maxRow = null;
       var maxCycles = 0;
+      var len = cData.isDiff ? data.length - 3 : data.length - 1;
 
-      for(var i = this.FIRST_DATA_ROW; i < data.length - 3; i++){
+      for(var i = this.FIRST_DATA_ROW; i < len; i++){
         var cycles = 0;
         var iRow = data[i];
         var oRow = (cData.grid[i - this.FIRST_DATA_ROW] = {id : i - this.FIRST_DATA_ROW});
