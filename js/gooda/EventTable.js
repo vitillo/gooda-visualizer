@@ -51,6 +51,7 @@ require(["dojo/_base/declare",
 
       var self = this;
       var sortcol = "";
+      var sortdir = false;
       var sortDiff = null;
       var searchString = "";
       var sampleMode = true;
@@ -244,7 +245,7 @@ require(["dojo/_base/declare",
         if(diff){ // number
           return (diff > 0 ? -1 : 1);
         }else{ // string
-          return x > y ? 1 : -1;
+          return sortdir ? (a.id > b.id ? 1 : -1) : (a.id > b.id ? -1 : 1);
         }
       }
       
@@ -382,6 +383,7 @@ require(["dojo/_base/declare",
 
         grid.onSort = function(sortCol, sortAsc) {
           sortcol = sortCol.id;
+          sortdir = sortAsc;
 
           switch(sortCol.id){
             case GOoDA.Columns.OFFSET:
