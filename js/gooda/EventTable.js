@@ -441,10 +441,16 @@ require(["dojo/_base/declare",
 
         switch(column.id){
           case GOoDA.Columns.SOURCE:
-          case GOoDA.Columns.DISASSEMBLY:
             column.sortable = false;
             column.cssClass = 'code';
             column.formatter = sourceFormatter;
+            column.resizable = true;
+            break;
+
+          case GOoDA.Columns.DISASSEMBLY:
+            column.sortable = false;
+            column.cssClass = 'code';
+            column.formatter = treeFormatter;
             column.resizable = true;
             break;
 
